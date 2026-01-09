@@ -1,7 +1,7 @@
 import AVFoundation
 import Combine
 import Foundation
-import MagicCore
+import MagicKit
 import os.log
 import SwiftUI
 

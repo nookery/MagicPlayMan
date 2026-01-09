@@ -1,41 +1,42 @@
-import MagicCore
+import MagicKit
 import SwiftUI
 import MagicUI
 
-/// 快进按钮视图
+/// 播放/暂停按钮视图
 /// 
 /// 这是一个自观察的按钮视图，会自动监听 MagicPlayMan 的播放状态变化。
-/// 提供快进功能，允许用户快速前进播放进度。
+/// 根据当前状态显示播放图标或暂停图标，并自动更新禁用状态。
 /// 
 /// ## 特性
 /// - 自动响应播放状态变化
-/// - 智能禁用状态管理（无媒体、加载中等）
+/// - 智能禁用状态管理
 /// - 支持自定义按钮尺寸
-/// - 使用 MagicButton 的次要样式
-/// - 默认快进 10 秒
+/// - 使用 MagicButton 的简单样式
 /// 
 /// ## 使用示例
 /// ```swift
-/// ForwardButtonView(man: playMan, size: .large)
+/// PlayPauseButtonView(man: playMan, size: .large)
 /// ```
 /// 
 /// - Parameters:
-///   - man: MagicPlayMan 实例，用于监听播放状态和触发快进操作
+///   - man: MagicPlayMan 实例，用于监听播放状态和触发播放控制
 ///   - size: 按钮尺寸，默认为 .regular
-struct ForwardButtonView: View {
+struct PlayPauseButtonView: View {
+    // 精简订阅：只订阅按钮所需的状态，避免不相关变化触发刷新
     @ObservedObject var man: MagicPlayMan
     let size: MagicButton.Size
 
     var body: some View {
         MagicButton.simple(
-            icon: .iconGoforward10,
-            style: .secondary,
+            icon: man.state == .playing ? .iconPauseFill : .iconPlayFill,
+            style: .primary,
             size: size,
             shape: .circle,
             disabledReason: !man.hasAsset ? "No media loaded" :
                 man.state.isLoading ? "Loading..." : nil,
-            action: { man.skipForward() }
+            action: man.toggle
         )
+        .magicId(man.playPauseButtonId)
     }
 }
 

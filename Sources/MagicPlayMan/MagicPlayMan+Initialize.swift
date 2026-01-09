@@ -2,7 +2,7 @@ import AVFoundation
 import Combine
 import Foundation
 import SwiftUI
-import MagicCore
+import MagicKit
 import MediaPlayer
 import OSLog
 

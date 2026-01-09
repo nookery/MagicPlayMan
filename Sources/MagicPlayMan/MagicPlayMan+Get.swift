@@ -1,6 +1,6 @@
 import AVFoundation
 import Foundation
-import MagicCore
+import MagicKit
 
 public extension MagicPlayMan {
     /// Returns the current playback error, if any.

@@ -1,4 +1,4 @@
-import MagicCore
+import MagicKit
 import SwiftUI
 
 /// MagicPlayMan 的视图相关功能扩展

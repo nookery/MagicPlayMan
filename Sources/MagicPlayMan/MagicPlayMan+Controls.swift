@@ -1,6 +1,6 @@
 import AVFoundation
 import Foundation
-import MagicCore
+import MagicKit
 import SwiftUI
 
 public extension MagicPlayMan {
