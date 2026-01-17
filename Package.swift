@@ -16,7 +16,7 @@ let package = Package(
         )
     ],
     dependencies: [
-        .package(url: "https://github.com/nookery/MagicKit.git", branch: "dev"),
+        .package(url: "https://github.com/nookery/MagicKit.git", from: "1.2.0"),
     ],
     targets: [
         .target(
