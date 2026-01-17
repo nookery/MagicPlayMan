@@ -9,6 +9,8 @@ struct AudioContentView: View, SuperLog {
     @State private var errorMessage: String?
     let verbose: Bool
 
+    @Environment(\.localization) private var loc
+
     init(asset: MagicAsset, artwork: Image? = nil, verbose: Bool = true) {
         self.asset = asset
         self.artwork = artwork
@@ -42,7 +44,7 @@ struct AudioContentView: View, SuperLog {
                         Button {
                             loadArtwork()
                         } label: {
-                            Label("Retry", systemImage: "arrow.clockwise")
+                            Label(loc.retry, systemImage: "arrow.clockwise")
                                 .font(.caption)
                         }
                         .buttonStyle(.bordered)
@@ -95,10 +97,10 @@ struct AudioContentView: View, SuperLog {
                 if let image = try await asset.url.thumbnail(size: CGSize(width: 600, height: 600), verbose: self.verbose, reason: "MagicPlayMan." + self.className + ".loadArtwork") {
                     localArtwork = image
                 } else {
-                    errorMessage = "No artwork available"
+                    errorMessage = loc.noArtworkAvailable
                 }
             } catch {
-                errorMessage = "Failed to load artwork:\n\(error.localizedDescription)"
+                errorMessage = "\(loc.failedToLoadArtwork):\n\(error.localizedDescription)"
             }
         }
     }

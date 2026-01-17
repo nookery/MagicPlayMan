@@ -20,7 +20,12 @@ public extension MagicPlayMan {
             cacheDirectory: URL? = nil,
             showLogs: Bool = true
         ) {
-            _playMan = StateObject(wrappedValue: MagicPlayMan(cacheDirectory: cacheDirectory, verbose: true))
+            // 显式指定使用中文
+            _playMan = StateObject(wrappedValue: MagicPlayMan(
+                cacheDirectory: cacheDirectory,
+                verbose: true,
+                locale: Locale(identifier: "zh_CN")
+            ))
             self.showLogs = showLogs
         }
 
@@ -75,6 +80,7 @@ public extension MagicPlayMan {
             .clipShape(RoundedRectangle(cornerRadius: 16))
             .shadow(radius: 5)
             .padding()
+            .localization(_playMan.wrappedValue.localization)
         }
 
         // MARK: - Main Layout Components

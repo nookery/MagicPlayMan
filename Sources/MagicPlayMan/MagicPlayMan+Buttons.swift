@@ -242,7 +242,7 @@ public extension MagicPlayMan {
 #Preview("Button Views") {
     let man = MagicPlayMan()
 
-    return VStack(spacing: 20) {
+    VStack(spacing: 20) {
         // 媒体选择按钮
         man.makeMediaPickerButton()
 
@@ -272,7 +272,7 @@ public extension MagicPlayMan {
 
         // 不同尺寸的按钮示例
         VStack(spacing: 16) {
-            Text("Different Sizes").font(.caption)
+            Text(Localization.preview.differentSizes).font(.caption)
             HStack(spacing: 16) {
                 man.makeLikeButtonView(size: .small)
                 man.makeLikeButtonView(size: .regular)

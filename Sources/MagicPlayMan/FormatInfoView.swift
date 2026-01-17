@@ -4,10 +4,12 @@ import SwiftUI
 struct FormatInfoView: View {
     let formats: [SupportedFormat]
 
+    @Environment(\.localization) private var loc
+
     var body: some View {
         VStack(alignment: .leading, spacing: 12) {
             HStack {
-                Text("Supported Formats")
+                Text(loc.supportedFormats)
                     .font(.headline)
                     .foregroundStyle(.secondary)
 

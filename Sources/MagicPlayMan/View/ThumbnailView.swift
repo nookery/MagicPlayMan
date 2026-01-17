@@ -2,6 +2,10 @@ import MagicKit
 import OSLog
 import SwiftUI
 
+extension Localization {
+    static let preview = Localization(locale: Locale(identifier: "zh_CN"))
+}
+
 struct ThumbnailView: View, SuperLog {
     nonisolated static let emoji = "🖥️"
 
@@ -144,7 +148,7 @@ struct ThumbnailView: View, SuperLog {
     ThumbnailView(url: .sample_invalid_url, defaultView: {
         VStack(spacing: 12) {
             Image(systemName: .iconDoc)
-            Text("No Artwork")
+            Text(Localization.preview.noArtwork)
                 .font(.headline)
                 .foregroundStyle(.secondary)
         }

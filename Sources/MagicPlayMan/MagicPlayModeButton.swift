@@ -98,13 +98,14 @@ struct MagicPlayModeButton: View {
 #Preview("MagicPlayModeButton") {
     struct PreviewWrapper: View {
         @State private var mode: MagicPlayMode = .sequence
-        
+        @Environment(\.localization) private var loc
+
         var body: some View {
             HStack(spacing: 20) {
                 VStack(spacing: 20) {
-                    Text("Light Mode")
+                    Text(loc.lightMode)
                         .font(.headline)
-                    
+
                     ForEach([
                         MagicPlayMode.sequence,
                         .loop,
@@ -119,11 +120,11 @@ struct MagicPlayModeButton: View {
                 .padding()
                 .background(.background)
                 .environment(\.colorScheme, .light)
-                
+
                 VStack(spacing: 20) {
-                    Text("Dark Mode")
+                    Text(loc.darkMode)
                         .font(.headline)
-                    
+
                     ForEach([
                         MagicPlayMode.sequence,
                         .loop,
@@ -141,6 +142,6 @@ struct MagicPlayModeButton: View {
             }
         }
     }
-    
+
     return PreviewWrapper()
 }

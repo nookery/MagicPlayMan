@@ -4,29 +4,31 @@ import SwiftUI
 struct LoadingOverlay: View {
     let state: PlaybackState.LoadingState
     let assetTitle: String
-    
+
+    @Environment(\.localization) private var loc
+
     var body: some View {
         ZStack {
             Rectangle()
                 .fill(.ultraThinMaterial)
-            
+
             switch state {
             case .downloading(let progress):
                 downloadingProgress(progress)
             case .buffering:
-                loadingIndicator("Buffering...")
+                loadingIndicator(loc.buffering)
             case .preparing:
-                loadingIndicator("Preparing...")
+                loadingIndicator(loc.preparing)
             case .connecting:
-                loadingIndicator("Connecting...")
+                loadingIndicator(loc.connecting)
             }
         }
     }
-    
+
     private func downloadingProgress(_ progress: Double) -> some View {
         VStack(spacing: 16) {
             ProgressView(
-                "Downloading \(assetTitle)",
+                "\(loc.downloading) \(assetTitle)",
                 value: progress,
                 total: 1.0
             )

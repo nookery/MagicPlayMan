@@ -32,6 +32,9 @@ public class MagicPlayMan: ObservableObject, SuperLog {
     private var _cachedLikeButton: MagicButton?
     private var _cachedPlaylistToggleButton: MagicButton?
 
+    /// 本地化配置
+    public var localization: Localization!
+
     @Published public private(set) var items: [URL] = []
     @Published public private(set) var currentIndex: Int = -1
     @Published public private(set) var playMode: MagicPlayMode = .sequence

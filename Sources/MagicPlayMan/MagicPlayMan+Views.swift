@@ -17,8 +17,8 @@ public extension MagicPlayMan {
     /// - Returns: 空状态视图
     private func makeEmptyView() -> some View {
         AudioPlayerView(
-            title: "No Media Selected",
-            artist: "Select a media file to play"
+            title: localization.noMediaSelected,
+            artist: localization.selectMediaToPlay
         )
     }
 

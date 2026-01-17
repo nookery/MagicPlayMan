@@ -12,13 +12,18 @@ public extension MagicPlayMan {
     ///   - cacheDirectory: 自定义缓存目录。如果为 nil，则使用系统默认缓存目录
     ///   - playlistEnabled: 是否启用播放列表，默认为 true
     ///   - verbose: 是否启用详细日志模式，默认为 false
+    ///   - locale: 本地化设置，默认为中文
     convenience init(
         cacheDirectory: URL? = nil,
         playlistEnabled: Bool = true,
-        verbose: Bool = false
+        verbose: Bool = false,
+        locale: Locale = Locale(identifier: "zh_CN")
     ) {
         self.init()
-        
+
+        // 设置本地化
+        self.localization = Localization(locale: locale)
+
         // 设置详细日志模式
         self.verbose = verbose
         if verbose {

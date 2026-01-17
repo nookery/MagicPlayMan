@@ -7,6 +7,8 @@ struct ErrorOverlay: View {
     let asset: MagicAsset
     let onRetry: () -> Void
 
+    @Environment(\.localization) private var loc
+
     var body: some View {
         ZStack {
             Rectangle()
@@ -17,7 +19,7 @@ struct ErrorOverlay: View {
                     .font(.system(size: 40))
                     .foregroundStyle(.red)
 
-                Text("Failed to Load Media")
+                Text(loc.failedToLoadMedia)
                     .font(.headline)
 
                 Text(errorMessage)
@@ -27,7 +29,7 @@ struct ErrorOverlay: View {
 
                 MagicButton.simple(
                     icon: "arrow.clockwise",
-                    title: "Try Again",
+                    title: loc.tryAgain,
                     shape: .capsule,
                     action: onRetry
                 )
@@ -39,15 +41,15 @@ struct ErrorOverlay: View {
     private var errorMessage: String {
         switch error {
         case .noAsset:
-            return "No media selected"
+            return loc.noMediaSelected
         case .invalidAsset:
-            return "The media file is invalid or corrupted"
+            return loc.invalidOrCorrupted
         case let .networkError(message):
-            return "Network error: \(message)"
+            return "\(loc.networkError): \(message)"
         case let .playbackError(message):
-            return "Playback error: \(message)"
+            return "\(loc.playbackError): \(message)"
         case let .unsupportedFormat(ext):
-            return "Unsupported format: \(ext)"
+            return "\(loc.unsupportedFormat): \(ext)"
         }
     }
 }

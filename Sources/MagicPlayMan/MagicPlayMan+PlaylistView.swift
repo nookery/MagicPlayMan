@@ -4,17 +4,19 @@ import MagicKit
 
 // MARK: - Empty Playlist View
 public struct EmptyPlaylistView: View {
+    @Environment(\.localization) private var loc
+
     public var body: some View {
         VStack(spacing: 20) {
             Image(systemName: "music.note.list")
                 .font(.system(size: 60))
                 .foregroundStyle(.secondary)
-            
+
             VStack(spacing: 8) {
-                Text("No Items in Playlist")
+                Text(loc.noItemsInPlaylist)
                     .font(.headline)
-                
-                Text("Add some media files to get started")
+
+                Text(loc.addSomeMediaFiles)
                     .font(.subheadline)
                     .foregroundStyle(.secondary)
                     .multilineTextAlignment(.center)
