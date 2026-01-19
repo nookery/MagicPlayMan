@@ -30,6 +30,12 @@ Then add it to your target dependencies:
 .product(name: "MagicPlayMan", package: "MagicPlayMan")
 ```
 
+## Used by
+
+Projects using MagicPlayMan:
+
+- [Cisum_SwiftUI](https://github.com/CofficLab/Cisum_SwiftUI.git) - A media player for Apple platforms
+
 ## Usage
 
 ```swift
