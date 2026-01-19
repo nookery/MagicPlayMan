@@ -24,7 +24,7 @@ extension MagicPlayMan {
         await downloadAndCache(url)
 
         let item = AVPlayerItem(url: url)
-        
+
         // 使用 Combine 监听状态，避免 @Sendable 捕获问题
         let statusObserver = item.publisher(for: \.status)
             .receive(on: DispatchQueue.main)
@@ -35,7 +35,7 @@ extension MagicPlayMan {
                     Task { @MainActor in
                         // 播放器准备就绪后，清理下载监听器
                         self.cleanupDownloadObservers()
-                        
+
                         self.setDuration(item.duration.seconds)
                         if self.isLoading {
                             self.setState(autoPlay ? .playing : .paused)
@@ -47,7 +47,7 @@ extension MagicPlayMan {
                     Task { @MainActor in
                         // 播放失败时也要清理下载监听器
                         self.cleanupDownloadObservers()
-                        
+
                         self.setState(.failed(.playbackError(message)))
                     }
                 default:
@@ -65,7 +65,7 @@ extension MagicPlayMan {
         guard cache != nil else {
             return
         }
-        
+
         if url.isDownloaded {
             return
         }
@@ -76,7 +76,7 @@ extension MagicPlayMan {
 
         // 添加节流控制
         let progressSubject = CurrentValueSubject<Double, Never>(0)
-        let progressObserver = url.onDownloading(caller: "MagicPlayMan") { progress in
+        let progressObserver = url.onDownloading(verbose: self.verbose, caller: "MagicPlayMan") { progress in
             // 这里接收进度更新，应该在后台线程处理
             DispatchQueue.global().async {
                 progressSubject.send(progress)
@@ -110,12 +110,12 @@ extension MagicPlayMan {
         // 开始下载
         Task {
             do {
-                try await url.download(verbose: true, reason: "MagicPlayMan requested")
+                try await url.download(verbose: self.verbose, reason: "MagicPlayMan requested")
             } catch {
                 await MainActor.run {
                     // 下载失败时清理监听器
                     self.cleanupDownloadObservers()
-                    
+
                     self.setState(.failed(.networkError(error.localizedDescription)))
                     self.log("Download failed: \(error.localizedDescription)", level: .error)
                 }
