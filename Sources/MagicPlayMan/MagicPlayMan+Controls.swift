@@ -12,7 +12,9 @@ public extension MagicPlayMan {
     ///   - autoPlay: 是否自动开始播放，默认为 true
     @MainActor
     func play(_ url: URL, autoPlay: Bool = true) async {
-        os_log("\(self.t)Play: \(url.title), AutoPlay: \(autoPlay)")
+        if self.verbose {
+            os_log("\(self.t)Play: \(url.title), AutoPlay: \(autoPlay)")
+        }
         self.setCurrentURL(url)
 
         // 检查 URL 是否有效
@@ -32,13 +34,10 @@ public extension MagicPlayMan {
         }
 
         // 加载资源
-        os_log("\(self.t)Load: \(url.title), AutoPlay: \(autoPlay)")
         await loadFromURL(url, autoPlay: autoPlay)
 
         if isPlaylistEnabled {
-            append(url)
-            os_log("\(self.t)Added URL to playlist: \(url.absoluteString)")
-        }
+            append(url)        }
     }
 
     /// 添加资源到播放列表
@@ -135,7 +134,9 @@ public extension MagicPlayMan {
         }
 
         _player.play()
-        os_log("\(self.t)Started playback: \(self.currentURL?.title ?? "Unknown")")
+        if verbose {
+            os_log("\(self.t)Started playback: \(self.currentURL?.title ?? "Unknown")")
+        }
         updateNowPlayingInfo()
 
         Task {
@@ -162,7 +163,9 @@ public extension MagicPlayMan {
         _player.pause()
         await _player.seek(to: .zero)
 
-        os_log("\(self.t)⏹️ Stopped playback")
+        if self.verbose {
+            os_log("\(self.t)⏹️ Stopped playback")
+        }
         updateNowPlayingInfo()
 
         await self.setState(.stopped)
@@ -192,7 +195,9 @@ public extension MagicPlayMan {
         }
 
         let targetTime = CMTime(seconds: time, preferredTimescale: 600)
-        os_log("\(self.t)⏩ Seeking to \(Int(time))s")
+        if verbose {
+            os_log("\(self.t)⏩ Seeking to \(Int(time))s")
+        }
         _player.seek(to: targetTime) { [weak self] finished in
             guard let self = self, finished else { return }
             Task { @MainActor in
@@ -267,7 +272,8 @@ public extension MagicPlayMan {
         guard let asset = currentURL else { return }
         setLike(!likedAssets.contains(asset))
     }
-  /// 清理所有缓存
+
+    /// 清理所有缓存
     func clearCache() {
         do {
             try cache?.clear()
@@ -288,10 +294,14 @@ public extension MagicPlayMan {
         var newLikedAssets = likedAssets
         if isLiked {
             newLikedAssets.insert(asset)
-            os_log("\(self.t)❤️ Added to liked: \(asset.title)")
+            if verbose {
+                os_log("\(self.t)❤️ Added to liked: \(asset.title)")
+            }
         } else {
             newLikedAssets.remove(asset)
-            os_log("\(self.t)💔 Removed from liked: \(asset.title)")
+            if verbose {
+                os_log("\(self.t)💔 Removed from liked: \(asset.title)")
+            }
         }
 
         Task {

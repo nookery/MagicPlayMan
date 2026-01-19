@@ -1,10 +1,10 @@
 import AVFoundation
 import Combine
 import Foundation
-import SwiftUI
 import MagicKit
 import MediaPlayer
 import OSLog
+import SwiftUI
 
 public extension MagicPlayMan {
     /// 初始化播放器
@@ -38,7 +38,9 @@ public extension MagicPlayMan {
         do {
             self.cache = try AssetCache(directory: cacheDirectory)
             if let cacheDir = self.cache?.directory {
-                os_log("\(self.t)Cache directory: \(cacheDir.path)")
+                if verbose {
+                    os_log("\(self.t)Cache directory: \(cacheDir.path)")
+                }
             }
         } catch {
             self.cache = nil
@@ -46,20 +48,17 @@ public extension MagicPlayMan {
                 os_log("\(self.t)Cache disabled")
             }
         }
-        
+
         // 完成初始化后再设置其他内容
         setupPlayer()
         setupObservers()
         setupRemoteControl()
-        
+
         // 设置播放列表状态
         Task {
             await self.setPlaylistEnabled(playlistEnabled)
         }
-        if !playlistEnabled {
-            os_log("\(self.t)Playlist disabled")
-        }
-        
+
         // 修改监听方式
         _playlist.$items
             .receive(on: DispatchQueue.main)
@@ -70,7 +69,7 @@ public extension MagicPlayMan {
                 }
             }
             .store(in: &cancellables)
-        
+
         _playlist.$currentIndex
             .receive(on: DispatchQueue.main)
             .sink { [weak self] index in
@@ -103,7 +102,7 @@ internal extension MagicPlayMan {
             self.setProgress(progress)
         }
     }
-    
+
     /// 设置观察者
     func setupObservers() {
         // 监听播放状态
@@ -131,7 +130,7 @@ internal extension MagicPlayMan {
                 }
             }
             .store(in: &cancellables)
-        
+
         // 监听缓冲状态
         _player.publisher(for: \.currentItem?.isPlaybackBufferEmpty)
             .receive(on: DispatchQueue.main)
@@ -148,13 +147,13 @@ internal extension MagicPlayMan {
                 }
             }
             .store(in: &cancellables)
-            
+
         // 监听播放完成
         NotificationCenter.default.publisher(for: .AVPlayerItemDidPlayToEndTime)
             .receive(on: DispatchQueue.main)
             .sink { [weak self] _ in
                 guard let self = self else { return }
-                
+
                 if let currentAsset = self.currentURL {
                     if verbose {
                         os_log("\(self.t)播放完成：\(currentAsset.title)")
@@ -204,7 +203,5 @@ internal extension MagicPlayMan {
 }
 
 #Preview("MagicPlayMan") {
-    
-        MagicPlayMan.PreviewView()
-        
+    MagicPlayMan.PreviewView()
 }
