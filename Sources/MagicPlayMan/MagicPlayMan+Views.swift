@@ -30,13 +30,6 @@ public extension MagicPlayMan {
         state.makeStateView(assetTitle: currentAsset?.title, localization: localization)
     }
 
-    /// 创建日志视图
-    /// - Returns: 返回一个显示播放器日志信息的视图
-    /// 用于展示播放器的事件历史和操作记录
-    func makeLogView() -> some View {
-        logger.logView(title: "MagicPlayMan-Logs")
-    }
-
     /// 创建播放列表视图
     /// - Returns: 返回一个播放列表视图，根据列表状态自动适配：
     /// - 当列表为空时，显示空列表提示视图

@@ -2,7 +2,7 @@ import AVFoundation
 import Combine
 import Foundation
 import MagicKit
-import os.log
+import OSLog
 import SwiftUI
 
 extension MagicPlayMan {
@@ -117,7 +117,9 @@ extension MagicPlayMan {
                     self.cleanupDownloadObservers()
 
                     self.setState(.failed(.networkError(error.localizedDescription)))
-                    self.log("Download failed: \(error.localizedDescription)", level: .error)
+                    if self.verbose {
+                        os_log("\(self.t)Download failed: \(error.localizedDescription)")
+                    }
                 }
             }
         }

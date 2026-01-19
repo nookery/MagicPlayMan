@@ -204,19 +204,6 @@ public extension MagicPlayMan {
         SupportedFormatsButtonView(man: self, size: size)
     }
 
-    /// 自观察版本：日志按钮视图
-    /// 
-    /// 这是一个自观察的按钮视图，会自动监听日志状态变化。
-    /// 提供播放器日志查看功能，通过弹窗展示播放器的操作历史和调试信息。
-    /// 
-    /// - Parameter size: 按钮尺寸，默认为 .regular
-    /// - Returns: 自观察的日志按钮视图
-    @MainActor
-    @ViewBuilder
-    func makeLogButtonView(size: MagicButton.Size = .regular) -> some View {
-        LogButtonView(man: self, size: size)
-    }
-
     /// 创建媒体选择按钮
     /// - Returns: 用于选择媒体资源的按钮
     /// - Note: 按钮会显示当前选中的媒体名称，如果没有选中则显示默认文本
@@ -267,7 +254,6 @@ public extension MagicPlayMan {
         HStack(spacing: 16) {
             man.makeSubscribersButtonView()
             man.makeSupportedFormatsButtonView()
-            man.makeLogButtonView()
         }
 
         // 不同尺寸的按钮示例

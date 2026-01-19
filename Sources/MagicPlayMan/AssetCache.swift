@@ -88,7 +88,7 @@ public class AssetCache {
 } 
 
 #Preview("With Logs") {
-    MagicPlayMan.PreviewView(showLogs: true)
+    MagicPlayMan.PreviewView()
         .frame(width: 650, height: 650)
         .background(.background)
         .clipShape(RoundedRectangle(cornerRadius: 16))

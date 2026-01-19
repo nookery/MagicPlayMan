@@ -1,5 +1,6 @@
 import MagicKit
 import MagicUI
+import OSLog
 import SwiftUI
 
 // MARK: - PreviewView
@@ -11,14 +12,12 @@ public extension MagicPlayMan {
         @StateObject private var playMan: MagicPlayMan
         @State private var selectedSampleName: String?
         @State private var showPlaylist = false
-        @State var showLogs: Bool
         @State private var toast: (message: String, icon: String, style: MagicToast.Style)?
 
         // MARK: - Initialization
 
         public init(
-            cacheDirectory: URL? = nil,
-            showLogs: Bool = true
+            cacheDirectory: URL? = nil
         ) {
             // 显式指定使用中文
             _playMan = StateObject(wrappedValue: MagicPlayMan(
@@ -26,7 +25,6 @@ public extension MagicPlayMan {
                 verbose: true,
                 locale: Locale(identifier: "zh_CN")
             ))
-            self.showLogs = showLogs
         }
 
         // MARK: - Event Observation
@@ -35,25 +33,39 @@ public extension MagicPlayMan {
             playMan.subscribe(
                 name: "PreviewView",
                 onTrackFinished: { [weak playMan] track in
-                    playMan?.log("观察到事件：单曲播放完成 - \(track.title)")
+                    if playMan?.verbose == true {
+                        os_log("\(playMan?.t ?? "")观察到事件：单曲播放完成 - \(track.title)")
+                    }
                 },
                 onPlaybackFailed: { [weak playMan] error in
-                    playMan?.log("观察到事件：播放失败 - \(error)", level: .error)
+                    if playMan?.verbose == true {
+                        os_log("\(playMan?.t ?? "")观察到事件：播放失败 - \(error)")
+                    }
                 },
                 onBufferingStateChanged: { [weak playMan] isBuffering in
-                    playMan?.log("观察到事件：缓冲状态变化 - \(isBuffering ? "开始缓冲" : "缓冲完成")")
+                    if playMan?.verbose == true {
+                        os_log("\(playMan?.t ?? "")观察到事件：缓冲状态变化 - \(isBuffering ? "开始缓冲" : "缓冲完成")")
+                    }
                 },
                 onStateChanged: { [weak playMan] state in
-                    playMan?.log("观察到事件：播放状态变化 - \(state)")
+                    if playMan?.verbose == true {
+                        os_log("\(playMan?.t ?? "")观察到事件：播放状态变化 - \(state.stateText)")
+                    }
                 },
                 onNextRequested: { [weak playMan] asset in
-                    playMan?.log("观察到事件：请求下一个 - \(asset.absoluteString)")
+                    if playMan?.verbose == true {
+                        os_log("\(playMan?.t ?? "")观察到事件：请求下一个 - \(asset.absoluteString)")
+                    }
                 },
                 onLikeStatusChanged: { [weak playMan] asset, isLiked in
-                    playMan?.log("观察到事件：喜欢状态变化 - \(asset.title) \(isLiked ? "被喜欢" : "取消喜欢")")
+                    if playMan?.verbose == true {
+                        os_log("\(playMan?.t ?? "")观察到事件：喜欢状态变化 - \(asset.title) \(isLiked ? "被喜欢" : "取消喜欢")")
+                    }
                 },
                 onPlayModeChanged: { [weak playMan] newMode in
-                    playMan?.log("观察到事件：播放模式变化 - \(playMan?.playMode.rawValue ?? "未知") -> \(newMode.rawValue)")
+                    if playMan?.verbose == true {
+                        os_log("\(playMan?.t ?? "")观察到事件：播放模式变化 - \(playMan?.playMode.rawValue ?? "未知") -> \(newMode.rawValue)")
+                    }
                 }
             )
         }
@@ -75,7 +87,6 @@ public extension MagicPlayMan {
             .onAppear {
                 setupEventObservation()
             }
-            .frame(width: 750, height: 1200)
             .background(.background)
             .clipShape(RoundedRectangle(cornerRadius: 16))
             .shadow(radius: 5)
@@ -123,7 +134,6 @@ public extension MagicPlayMan {
                 playMan.makePlaylistToggleButtonView()
                 playMan.makeSubscribersButtonView()
                 playMan.makeSupportedFormatsButtonView()
-                playMan.makeLogButtonView()
                 playMan.makeLikeButtonView()
             }
         }
@@ -207,12 +217,7 @@ public extension MagicPlayMan {
 
         private var bottomSection: some View {
             GroupBox {
-                if showLogs {
-                    playMan.makeLogView()
-                        .frame(height: 500)
-                        .padding()
-                        .background(.ultraThinMaterial)
-                }
+                EmptyView()
             }
             .padding()
         }
@@ -326,4 +331,5 @@ public extension MagicPlayMan {
 
 #Preview("MagicPlayMan") {
     MagicPlayMan.PreviewView()
+        .frame(width: 500, height: 700)
 }
