@@ -27,7 +27,7 @@ public extension MagicPlayMan {
     /// - 播放/暂停状态
     /// - 当前播放资源的标题
     func makeStateView() -> some View {
-        state.makeStateView(assetTitle: currentAsset?.title)
+        state.makeStateView(assetTitle: currentAsset?.title, localization: localization)
     }
 
     /// 创建日志视图

@@ -223,6 +223,42 @@ public struct Localization {
         default: return "Unsupported format"
         }
     }
+
+    // MARK: - Playback State Text
+    public var ready: String {
+        switch locale.language.languageCode?.identifier {
+        case "zh": return "就绪"
+        default: return "Ready"
+        }
+    }
+
+    public var playing: String {
+        switch locale.language.languageCode?.identifier {
+        case "zh": return "播放中"
+        default: return "Playing"
+        }
+    }
+
+    public var paused: String {
+        switch locale.language.languageCode?.identifier {
+        case "zh": return "已暂停"
+        default: return "Paused"
+        }
+    }
+
+    public var stopped: String {
+        switch locale.language.languageCode?.identifier {
+        case "zh": return "已停止"
+        default: return "Stopped"
+        }
+    }
+
+    public var failed: String {
+        switch locale.language.languageCode?.identifier {
+        case "zh": return "失败"
+        default: return "Failed"
+        }
+    }
 }
 
 // MARK: - SwiftUI Environment Key

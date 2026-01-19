@@ -228,11 +228,11 @@ public extension MagicPlayMan {
                 case let .downloading(progress):
                     downloadingProgress(progress, title: assetTitle)
                 case .buffering:
-                    loadingIndicator("Buffering...")
+                    loadingIndicator(playMan.localization.buffering)
                 case .preparing:
-                    loadingIndicator("Preparing...")
+                    loadingIndicator(playMan.localization.preparing)
                 case .connecting:
-                    loadingIndicator("Connecting...")
+                    loadingIndicator(playMan.localization.connecting)
                 }
             }
         }
@@ -247,17 +247,17 @@ public extension MagicPlayMan {
                         .font(.system(size: 40))
                         .foregroundStyle(.red)
 
-                    Text("Failed to Load Media")
+                    Text(playMan.localization.failedToLoadMedia)
                         .font(.headline)
 
-                    Text(errorMessage(for: error))
+                    Text(error.localizedDescription(localization: playMan.localization))
                         .font(.caption)
                         .foregroundStyle(.secondary)
                         .multilineTextAlignment(.center)
 
                     MagicButton.simple(
                         icon: "arrow.clockwise",
-                        title: "Try Again",
+                        title: playMan.localization.tryAgain,
                         style: .primary,
                         shape: .capsule,
                         action: onRetry
@@ -281,7 +281,7 @@ public extension MagicPlayMan {
         private func downloadingProgress(_ progress: Double, title: String) -> some View {
             VStack(spacing: 16) {
                 ProgressView(
-                    "Downloading \(title)",
+                    "\(playMan.localization.downloading) \(title)",
                     value: progress,
                     total: 1.0
                 )
@@ -302,21 +302,6 @@ public extension MagicPlayMan {
         }
 
         // MARK: - Helper Methods
-
-        private func errorMessage(for error: PlaybackState.PlaybackError) -> String {
-            switch error {
-            case .noAsset:
-                return "No media selected"
-            case .invalidAsset:
-                return "The media file is invalid or corrupted"
-            case let .networkError(message):
-                return "Network error: \(message)"
-            case let .playbackError(message):
-                return "Playback error: \(message)"
-            case let .unsupportedFormat(ext):
-                return "Unsupported format: \(ext)"
-            }
-        }
 
         private func showToast(
             _ message: String,

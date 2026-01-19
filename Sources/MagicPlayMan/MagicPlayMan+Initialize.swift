@@ -24,6 +24,11 @@ public extension MagicPlayMan {
         // 设置本地化
         self.localization = Localization(locale: locale)
 
+        if verbose {
+            log("Localization: \(locale.identifier)")
+            os_log("\(self.t)Localization: \(locale.identifier)")
+        }
+
         // 设置详细日志模式
         self.verbose = verbose
         if verbose {

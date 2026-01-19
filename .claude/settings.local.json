@@ -1,7 +1,10 @@
 {
   "permissions": {
     "allow": [
-      "Bash(swift build:*)"
+      "Bash(swift build:*)",
+      "mcp__ide__getDiagnostics",
+      "Bash(cat:*)",
+      "Bash(xcodebuild:*)"
     ]
   }
 }
