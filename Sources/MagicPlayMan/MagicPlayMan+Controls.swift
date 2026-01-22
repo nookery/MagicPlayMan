@@ -60,29 +60,43 @@ public extension MagicPlayMan {
 
     /// 播放下一首
     func next() {
-        os_log("\(self.t)下一首，当前是否有Asset -> \(self.hasAsset)")
+        if self.verbose {
+            os_log("\(self.t)下一首，当前是否有Asset -> \(self.hasAsset)")
+        }
         guard hasAsset else { return }
 
         if isPlaylistEnabled {
-            os_log("\(self.t)下一首，播放列表已启用")
+            if self.verbose {
+                os_log("\(self.t)下一首，播放列表已启用")
+            }
             if let nextAsset = _playlist.playNext(mode: playMode) {
-                os_log("\(self.t)下一首，播放列表已启用且下一个是：\(nextAsset.title)")
+                if self.verbose {
+                    os_log("\(self.t)下一首，播放列表已启用且下一个是：\(nextAsset.title)")
+                }
                 Task {
                     await loadFromURL(nextAsset)
                 }
             } else {
-                os_log("\(self.t)下一首，播放列表已启用但没有 NextAsset")
+                if self.verbose {
+                    os_log("\(self.t)下一首，播放列表已启用但没有 NextAsset")
+                }
             }
         } else if events.hasNavigationSubscribers {
-            os_log("\(self.t)下一首，播放列表已禁用且有 NavigationSubscribers")
+            if self.verbose {
+                os_log("\(self.t)下一首，播放列表已禁用且有 NavigationSubscribers")
+            }
 
             // 如果播放列表被禁用但有订阅者，发送请求下一首事件
             if let currentAsset = currentAsset {
-                os_log("\(self.t)请求下一首")
+                if self.verbose {
+                    os_log("\(self.t)请求下一首")
+                }
                 events.onNextRequested.send(currentAsset)
             }
         } else {
-            os_log("\(self.t)下一首，播放列表已禁用且无 NavigationSubscribers")
+            if self.verbose {
+                os_log("\(self.t)下一首，播放列表已禁用且无 NavigationSubscribers")
+            }
         }
     }
 
@@ -92,6 +106,9 @@ public extension MagicPlayMan {
 
         if isPlaylistEnabled {
             if let previousAsset = _playlist.playPrevious(mode: playMode) {
+                if self.verbose {
+                    os_log("\(self.t)上一首，播放列表已启用且上一个的是：\(previousAsset.title)")
+                }
                 Task {
                     await loadFromURL(previousAsset)
                 }
@@ -149,7 +166,9 @@ public extension MagicPlayMan {
         guard hasAsset else { return }
 
         _player.pause()
-        os_log("\(self.t)Paused playback")
+        if self.verbose {
+            os_log("\(self.t)Paused playback")
+        }
         updateNowPlayingInfo()
 
         Task {
