@@ -28,7 +28,7 @@ public struct EmptyPlaylistView: View {
 }
 
 // MARK: - Playlist Content View
-public struct PlaylistContentView: View {
+public struct PlaylistContentView: View, SuperLog {
     @ObservedObject var playMan: MagicPlayMan
     
     public var body: some View {
@@ -41,7 +41,7 @@ public struct PlaylistContentView: View {
                 .contentShape(Rectangle())
                 .onTapGesture {
                     Task {
-                        await playMan.play(asset)
+                        await playMan.play(asset, reason: self.className)
                     }
                 }
             }

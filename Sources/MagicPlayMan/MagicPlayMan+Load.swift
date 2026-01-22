@@ -10,18 +10,19 @@ extension MagicPlayMan {
     /// - Parameters:
     ///   - url: 媒体文件的 URL
     ///   - autoPlay: 是否自动开始播放，默认为 true
-    func loadFromURL(_ url: URL, autoPlay: Bool = true) async {
-        await stop()
+    ///   - reason: 更新原因
+    func loadFromURL(_ url: URL, autoPlay: Bool = true, reason: String) async {
+//        await stop(reason: reason)
         await self.setCurrentURL(url)
-        await self.setState(.loading(.preparing))
+        await self.setState(.loading(.preparing), reason: reason)
 
         // 检查文件是否存在
         guard url.isFileExist else {
-            await self.setState(.failed(.invalidAsset))
+            await self.setState(.failed(.invalidAsset), reason: reason)
             return
         }
 
-        await downloadAndCache(url)
+        await downloadAndCache(url, reason: reason)
 
         let item = AVPlayerItem(url: url)
 
@@ -38,8 +39,8 @@ extension MagicPlayMan {
 
                         self.setDuration(item.duration.seconds)
                         if self.isLoading {
-                            self.setState(autoPlay ? .playing : .paused)
-                            if autoPlay { self.play() }
+                            self.setState(autoPlay ? .playing : .paused, reason: reason)
+                            if autoPlay { self.play(reason: reason) }
                         }
                     }
                 case .failed:
@@ -48,7 +49,7 @@ extension MagicPlayMan {
                         // 播放失败时也要清理下载监听器
                         self.cleanupDownloadObservers()
 
-                        self.setState(.failed(.playbackError(message)))
+                        self.setState(.failed(.playbackError(message)), reason: reason)
                     }
                 default:
                     break
@@ -60,8 +61,11 @@ extension MagicPlayMan {
     }
 
     /// 下载并缓存资源
+    /// - Parameters:
+    ///   - url: 要下载的资源 URL
+    ///   - reason: 更新原因
     @MainActor
-    private func downloadAndCache(_ url: URL) {
+    private func downloadAndCache(_ url: URL, reason: String) {
         guard cache != nil else {
             return
         }
@@ -71,7 +75,7 @@ extension MagicPlayMan {
         }
 
         Task {
-            await self.setState(.loading(.connecting))
+            await self.setState(.loading(.connecting), reason: "\(reason).\(self.className).downloadAndCache")
         }
 
         // 添加节流控制
@@ -91,7 +95,7 @@ extension MagicPlayMan {
                 Task {
                     // 只有在加载状态时才更新下载进度，避免与播放状态冲突
                     if case .loading = self.state {
-                        await self.setState(.loading(.downloading(progress)))
+                        await self.setState(.loading(.downloading(progress)), reason: "\(reason).\(self.className).downloadProgress")
                     }
                 }
             }
@@ -116,7 +120,7 @@ extension MagicPlayMan {
                     // 下载失败时清理监听器
                     self.cleanupDownloadObservers()
 
-                    self.setState(.failed(.networkError(error.localizedDescription)))
+                    self.setState(.failed(.networkError(error.localizedDescription)), reason: "\(reason).\(self.className).downloadAndCache")
                     if self.verbose {
                         os_log("\(self.t)Download failed: \(error.localizedDescription)")
                     }

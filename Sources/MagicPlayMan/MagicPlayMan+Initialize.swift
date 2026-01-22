@@ -25,13 +25,13 @@ public extension MagicPlayMan {
         self.localization = Localization(locale: locale)
 
         if verbose {
-            os_log("\(self.t)Localization: \(locale.identifier)")
+            os_log("\(self.t)🌍 Localization: \(locale.identifier)")
         }
 
         // 设置详细日志模式
         self.verbose = verbose
         if verbose {
-            os_log("\(self.t)Verbose mode enabled")
+            os_log("\(self.t)📢 Verbose mode enabled")
         }
 
         // 初始化缓存，如果失败则禁用缓存功能
@@ -39,7 +39,7 @@ public extension MagicPlayMan {
             self.cache = try AssetCache(directory: cacheDirectory)
             if let cacheDir = self.cache?.directory {
                 if verbose {
-                    os_log("\(self.t)Cache directory: \(cacheDir.path)")
+                    os_log("\(self.t)📁 缓存目录: \(cacheDir.path)")
                 }
             }
         } catch {
@@ -114,15 +114,15 @@ internal extension MagicPlayMan {
                     switch status {
                     case .playing:
                         if case .loading = self.state {
-                            self.setState(.playing)
+                            self.setState(.playing, reason: self.className + ".systemObserver")
                         }
                     case .paused:
                         if case .playing = self.state {
-                            self.setState(self.currentTime == 0 ? .stopped : .paused)
+                            self.setState(self.currentTime == 0 ? .stopped : .paused, reason: self.className + ".systemObserver")
                         }
                     case .waitingToPlayAtSpecifiedRate:
                         if case .playing = self.state {
-                            self.setState(.loading(.buffering))
+                            self.setState(.loading(.buffering), reason: self.className + ".systemObserver")
                         }
                     @unknown default:
                         break
@@ -139,9 +139,9 @@ internal extension MagicPlayMan {
                 if let isEmpty = isEmpty {
                     Task { @MainActor in
                         if isEmpty, case .playing = self.state {
-                            self.setState(.loading(.buffering))
+                            self.setState(.loading(.buffering), reason: "bufferObserver")
                         } else if !isEmpty, case .loading(.buffering) = self.state {
-                            self.setState(.playing)
+                            self.setState(.playing, reason: "bufferObserver")
                         }
                     }
                 }
@@ -156,7 +156,7 @@ internal extension MagicPlayMan {
 
                 if let currentAsset = self.currentURL {
                     if verbose {
-                        os_log("\(self.t)播放完成：\(currentAsset.title)")
+                        os_log("\(self.t)✅ 播放完成：\(currentAsset.title)")
                     }
 
                     // 如果是单曲循环模式，重新播放当前曲目
@@ -165,8 +165,8 @@ internal extension MagicPlayMan {
                             os_log("\(self.t)单曲循环模式，重新播放：\(currentAsset.title)")
                         }
                         Task { @MainActor in
-                            self.seek(time: 0)
-                            self.setState(.playing)
+                            self.seek(time: 0, reason: "单曲循环模式，重新播放")
+                            self.setState(.playing, reason: "单曲循环模式，重新播放")
                         }
                         return
                     }
@@ -174,10 +174,10 @@ internal extension MagicPlayMan {
                     if !self.isPlaylistEnabled {
                         // 如果播放列表被禁用，通知调用者播放完成
                         if verbose {
-                            os_log("\(self.t)播放列表已禁用，等待订阅者处理下一首")
+                            os_log("\(self.t)🌹 播放列表已禁用，等待订阅者处理下一首")
                         }
                         Task { @MainActor in
-                            self.setState(.stopped)
+                            self.setState(.stopped, reason: "playbackFinished")
                         }
                         self.events.onNextRequested.send(currentAsset)
                     } else if let nextAsset = self._playlist.playNext(mode: self.playMode) {
@@ -186,14 +186,14 @@ internal extension MagicPlayMan {
                             os_log("\(self.t)播放列表已启用，即将播放下一首：\(nextAsset.title)")
                         }
                         Task {
-                            await self.loadFromURL(nextAsset)
+                            await self.loadFromURL(nextAsset, reason: "播放列表已启用，即将播放下一首")
                         }
                     } else {
                         if verbose {
                             os_log("\(self.t)播放列表已到末尾")
                         }
                         Task { @MainActor in
-                            self.setState(.stopped)
+                            self.setState(.stopped, reason: "playlistFinished")
                         }
                     }
                 }

@@ -21,7 +21,7 @@ import MagicUI
 /// - Parameters:
 ///   - man: MagicPlayMan 实例，用于监听播放状态和触发播放控制
 ///   - size: 按钮尺寸，默认为 .regular
-struct PlayPauseButtonView: View {
+struct PlayPauseButtonView: View, SuperLog {
     // 精简订阅：只订阅按钮所需的状态，避免不相关变化触发刷新
     @ObservedObject var man: MagicPlayMan
     let size: MagicButton.Size
@@ -34,7 +34,9 @@ struct PlayPauseButtonView: View {
             shape: .circle,
             disabledReason: !man.hasAsset ? "No media loaded" :
                 man.state.isLoading ? "Loading..." : nil,
-            action: man.toggle
+            action: {
+                man.toggle(reason: self.className)
+            }
         )
         .magicId(man.playPauseButtonId)
     }
