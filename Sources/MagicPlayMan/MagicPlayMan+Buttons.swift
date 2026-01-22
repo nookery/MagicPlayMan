@@ -213,7 +213,7 @@ public extension MagicPlayMan {
             selectedName: currentURL?.title,
             onSelect: { url in
                 Task {
-                    await self.play(url)
+                    await self.play(url, reason: "makeMediaPickerButton")
                 }
             }
         )

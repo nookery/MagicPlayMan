@@ -118,12 +118,12 @@ extension MagicPlayMan {
     }
 
     @MainActor
-    func setState(_ state: PlaybackState) {
+    internal func setState(_ state: PlaybackState, reason: String) {
         let oldState = self.state
         self.state = state
 
         if verbose {
-            os_log("\(self.t)播放状态变更：\(state.stateText)")
+            os_log("\(self.t)🍋 (\(reason)) 设置播放状态为：\(state.stateText)")
         }
         events.onStateChanged.send(state)
 

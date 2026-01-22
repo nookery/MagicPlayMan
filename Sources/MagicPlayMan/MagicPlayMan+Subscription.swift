@@ -147,7 +147,7 @@ extension MagicPlayMan {
                 .receive(on: DispatchQueue.main)
                 .sink { [weak self] asset in
                     if self?.verbose == true {
-                        os_log("\(self?.t ?? "")事件：当前(\(asset.absoluteString))，请求下一首 - 将由 \(name) 处理")
+                        os_log("\(self?.t ?? "")🍋 事件：当前(\(asset.lastThreeComponents()))，请求下一首 - 将由 \(name) 处理")
                     }
                     handler(asset)
                 }

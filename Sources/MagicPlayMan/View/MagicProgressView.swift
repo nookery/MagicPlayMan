@@ -19,7 +19,7 @@ import SwiftUI
 /// ```
 /// 
 /// - Parameter man: MagicPlayMan 实例，用于监听播放进度状态和触发进度控制
-struct MagicPlayProgressView: View {
+struct MagicPlayProgressView: View, SuperLog {
     @ObservedObject var man: MagicPlayMan
 
     var body: some View {
@@ -27,12 +27,12 @@ struct MagicPlayProgressView: View {
             currentTime: .init(
                 get: { man.currentTime },
                 set: { time in
-                    man.seek(time: time)
+                    man.seek(time: time, reason: self.className)
                 }
             ),
             duration: man.duration,
             onSeek: { time in
-                man.seek(time: time)
+                man.seek(time: time, reason: self.className)
             }
         )
     }
