@@ -22,7 +22,7 @@ public enum PlaybackState: Equatable {
         case networkError(String)
         case playbackError(String)
         case unsupportedFormat(String)
-        
+
         public var errorDescription: String? {
             switch self {
             case .noAsset:
@@ -35,6 +35,22 @@ public enum PlaybackState: Equatable {
                 return "Playback error: \(message)"
             case .unsupportedFormat(let ext):
                 return "Unsupported format: \(ext)"
+            }
+        }
+
+        /// 获取本地化的错误描述
+        public func localizedDescription(localization: Localization) -> String {
+            switch self {
+            case .noAsset:
+                return localization.noMediaSelected
+            case .invalidAsset:
+                return localization.invalidOrCorrupted
+            case .networkError(let message):
+                return "\(localization.networkError): \(message)"
+            case .playbackError(let message):
+                return "\(localization.playbackError): \(message)"
+            case .unsupportedFormat(let ext):
+                return "\(localization.unsupportedFormat): \(ext)"
             }
         }
         
@@ -178,10 +194,43 @@ public enum PlaybackState: Equatable {
     }
     
     // MARK: - View Builder
-    
+
     /// 创建状态视图
-    public func makeStateView(assetTitle: String? = nil) -> some View {
-        StateView(state: self, assetTitle: assetTitle)
+    public func makeStateView(assetTitle: String? = nil, localization: Localization) -> some View {
+        StateView(state: self, assetTitle: assetTitle, localization: localization)
+    }
+
+    /// 获取本地化的错误描述
+    func localizedErrorDescription(localization: Localization) -> String? {
+        guard case .failed(let error) = self else { return nil }
+        return error.localizedDescription(localization: localization)
+    }
+
+    /// 获取本地化的状态文本
+    public func localizedStateText(localization: Localization) -> String {
+        switch self {
+        case .idle:
+            return localization.ready
+        case .loading(let loadingState):
+            switch loadingState {
+            case .connecting:
+                return localization.connecting
+            case .preparing:
+                return localization.preparing
+            case .buffering:
+                return localization.buffering
+            case .downloading(let progress):
+                return "\(localization.downloading) \(Int(progress * 100))%"
+            }
+        case .playing:
+            return localization.playing
+        case .paused:
+            return localization.paused
+        case .stopped:
+            return localization.stopped
+        case .failed:
+            return localization.failed
+        }
     }
 }
 
@@ -191,6 +240,7 @@ public enum PlaybackState: Equatable {
 public struct StateView: View {
     let state: PlaybackState
     let assetTitle: String?
+    let localization: Localization
     
     public var body: some View {
         HStack(spacing: 12) {
@@ -202,7 +252,7 @@ public struct StateView: View {
             
             VStack(alignment: .leading, spacing: 4) {
                 // 状态文本
-                Text(state.stateText)
+                Text(state.localizedStateText(localization: localization))
                     .font(.subheadline)
                     .foregroundStyle(state.iconColor)
                 
@@ -227,7 +277,7 @@ public struct StateView: View {
                 
                 // 如果是错误状态，显示错误信息
                 if case .failed(let error) = state {
-                    Text(error.localizedDescription)
+                    Text(error.localizedDescription(localization: localization))
                         .font(.caption)
                         .foregroundStyle(.red)
                 }
@@ -251,14 +301,15 @@ public struct StateView: View {
 
 // MARK: - Preview
 #Preview("PlaybackState Views") {
-    VStack(spacing: 20) {
-        PlaybackState.idle.makeStateView()
-        PlaybackState.loading(.connecting).makeStateView(assetTitle: "Test Media")
-        PlaybackState.loading(.downloading(0.45)).makeStateView(assetTitle: "Downloading...")
-        PlaybackState.playing.makeStateView(assetTitle: "Now Playing")
-        PlaybackState.paused.makeStateView(assetTitle: "Paused Media")
-        PlaybackState.stopped.makeStateView()
-        PlaybackState.failed(.networkError("Connection timeout")).makeStateView()
+    let localization = Localization(locale: Locale(identifier: "zh_CN"))
+    return VStack(spacing: 20) {
+        PlaybackState.idle.makeStateView(localization: localization)
+        PlaybackState.loading(.connecting).makeStateView(assetTitle: "Test Media", localization: localization)
+        PlaybackState.loading(.downloading(0.45)).makeStateView(assetTitle: "Downloading...", localization: localization)
+        PlaybackState.playing.makeStateView(assetTitle: "Now Playing", localization: localization)
+        PlaybackState.paused.makeStateView(assetTitle: "Paused Media", localization: localization)
+        PlaybackState.stopped.makeStateView(localization: localization)
+        PlaybackState.failed(.networkError("Connection timeout")).makeStateView(localization: localization)
     }
     .padding()
     .frame(height: 700)

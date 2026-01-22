@@ -27,14 +27,7 @@ public extension MagicPlayMan {
     /// - 播放/暂停状态
     /// - 当前播放资源的标题
     func makeStateView() -> some View {
-        state.makeStateView(assetTitle: currentAsset?.title)
-    }
-
-    /// 创建日志视图
-    /// - Returns: 返回一个显示播放器日志信息的视图
-    /// 用于展示播放器的事件历史和操作记录
-    func makeLogView() -> some View {
-        logger.logView(title: "MagicPlayMan-Logs")
+        state.makeStateView(assetTitle: currentAsset?.title, localization: localization)
     }
 
     /// 创建播放列表视图

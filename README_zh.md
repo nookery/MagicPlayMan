@@ -177,6 +177,12 @@ PlayPauseButton()
     .foregroundColor(.blue)
 ```
 
+## 使用项目
+
+以下项目使用了MagicPlayMan：
+
+- [Cisum_SwiftUI](https://github.com/CofficLab/Cisum_SwiftUI.git) - 一个适用于Apple平台的音频播放器
+
 ## 要求
 
 - iOS 17.0+

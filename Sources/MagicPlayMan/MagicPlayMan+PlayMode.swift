@@ -1,5 +1,6 @@
 import Foundation
 import MagicKit
+import OSLog
 import SwiftUI
 
 public extension MagicPlayMan {
@@ -11,7 +12,9 @@ public extension MagicPlayMan {
     /// sequence -> single -> random -> sequence
     func togglePlayMode() {
         changePlayMode(self.playMode.next)
-        log("Playback mode changed to: \(playMode.displayName)")
+        if verbose {
+            os_log("\(self.t)Playback mode changed to: \(self.playMode.displayName)")
+        }
     }
 
     /// 获取当前播放模式的显示名称

@@ -122,7 +122,9 @@ extension MagicPlayMan {
         let oldState = self.state
         self.state = state
 
-        log("播放状态变更：\(state.stateText)")
+        if verbose {
+            os_log("\(self.t)播放状态变更：\(state.stateText)")
+        }
         events.onStateChanged.send(state)
 
         // 发送状态变更通知
@@ -131,7 +133,7 @@ extension MagicPlayMan {
         if oldIsPlaying != isPlaying {
             sendStateChanged(isPlaying: isPlaying)
         }
-        
+
         // 清理按钮缓存，因为状态变化可能影响按钮外观
         clearButtonCache()
     }
@@ -158,9 +160,11 @@ extension MagicPlayMan {
     func setPlayMode(_ mode: MagicPlayMode) {
         playMode = mode
 
-        log("播放模式变更：\(playMode)")
+        if verbose {
+            os_log("\(self.t)播放模式变更：\(mode.displayName)")
+        }
         events.onPlayModeChanged.send(playMode)
-        
+
         // 清理播放模式按钮缓存
         setCachedPlayModeButton(nil)
     }
