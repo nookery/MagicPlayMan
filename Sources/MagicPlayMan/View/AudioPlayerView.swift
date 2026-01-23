@@ -2,25 +2,27 @@ import MagicKit
 import OSLog
 import SwiftUI
 
-// MARK: - Audio Player View
-
 struct AudioPlayerView: View, SuperLog {
     nonisolated static let emoji = "🖥️"
 
     let title: String
     let artist: String?
     let url: URL?
+    let defaultArtwork: Image?
+    let defaultArtworkBuilder: (() -> any View)?
 
-    init(title: String, artist: String? = nil, url: URL? = nil) {
+    init(title: String, artist: String? = nil, url: URL? = nil, defaultArtwork: Image? = nil, defaultArtworkBuilder: (() -> any View)? = nil) {
         self.title = title
         self.artist = artist
         self.url = url
+        self.defaultArtwork = defaultArtwork
+        self.defaultArtworkBuilder = defaultArtworkBuilder
     }
 
     var body: some View {
         VStack(spacing: 20) {
             // 使用优化后的 ThumbnailView
-            ThumbnailView(url: url)
+            ThumbnailView(url: url, defaultImage: defaultArtwork, defaultViewBuilder: defaultArtworkBuilder)
                 .frame(maxWidth: .infinity, maxHeight: .infinity)
                 .padding(20)
 
@@ -42,9 +44,7 @@ struct AudioPlayerView: View, SuperLog {
     }
 }
 
-// MARK: - Preview
-
-#Preview("MagicPlayMan") {
-    MagicPlayMan.PreviewView()
-       
+#Preview("AudioPlayerView Showcase") {
+    AudioPlayerViewShowcase()
 }
+

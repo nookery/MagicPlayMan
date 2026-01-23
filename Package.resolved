@@ -23,8 +23,8 @@
       "kind" : "remoteSourceControl",
       "location" : "https://github.com/nookery/MagicKit.git",
       "state" : {
-        "revision" : "b598c7b3370d88132e8115b3e1c25bda15c7de8c",
-        "version" : "1.2.2"
+        "revision" : "048a7d6207065b0b1d92e9e23e326befe2c75eab",
+        "version" : "1.2.9"
       }
     },
     {
@@ -32,8 +32,8 @@
       "kind" : "remoteSourceControl",
       "location" : "https://github.com/nookery/MagicUI.git",
       "state" : {
-        "revision" : "34bd2637615ccb09922f18483acd8a5410d64ccd",
-        "version" : "0.0.2"
+        "revision" : "ab8c4d1c4e0d0bfb768a08644321acb935bcd45d",
+        "version" : "1.0.4"
       }
     },
     {

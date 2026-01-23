@@ -9,7 +9,9 @@ public extension MagicPlayMan {
     private func makeAudioView(url: URL) -> some View {
         AudioPlayerView(
             title: url.title,
-            url: url
+            url: url,
+            defaultArtwork: defaultArtwork,
+            defaultArtworkBuilder: defaultArtworkBuilder
         )
     }
 
@@ -18,7 +20,9 @@ public extension MagicPlayMan {
     private func makeEmptyView() -> some View {
         AudioPlayerView(
             title: localization.noMediaSelected,
-            artist: localization.selectMediaToPlay
+            artist: localization.selectMediaToPlay,
+            defaultArtwork: defaultArtwork,
+            defaultArtworkBuilder: defaultArtworkBuilder
         )
     }
 
@@ -68,10 +72,10 @@ public extension MagicPlayMan {
     }
 
     /// 创建播放进度条视图
-    /// 
+    ///
     /// 这是一个自观察的进度条视图，会自动监听播放进度状态变化。
     /// 提供播放进度显示和拖动控制功能，支持实时进度更新和用户交互。
-    /// 
+    ///
     /// - Returns: 自观察的播放进度条视图
     func makeProgressView() -> some View {
         MagicPlayProgressView(man: self)
@@ -104,7 +108,8 @@ public extension MagicPlayMan {
                 ThumbnailView(
                     url: currentAsset!,
                     verbose: verbose,
-                    defaultImage: defaultImage
+                    defaultImage: defaultImage ?? defaultArtwork,
+                    defaultViewBuilder: defaultImage == nil ? defaultArtworkBuilder : nil
                 )
             } else {
                 makeVideoView()

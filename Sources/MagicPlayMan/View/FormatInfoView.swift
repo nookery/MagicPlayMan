@@ -50,3 +50,7 @@ struct FormatInfoView: View {
         }
     }
 }
+
+#Preview("FormatInfoView") {
+    FormatInfoViewShowcase()
+}
