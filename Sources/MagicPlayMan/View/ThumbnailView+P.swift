@@ -9,7 +9,7 @@ struct ThumbnailViewShowcase: View {
         HSplitView {
             // 左侧案例列表
             VStack(alignment: .leading, spacing: 0) {
-                Text("ThumbnailView 案例")
+                Text("ThumbnailView")
                     .font(.headline)
                     .padding()
 
@@ -27,7 +27,7 @@ struct ThumbnailViewShowcase: View {
 
                 Spacer()
             }
-            .frame(minWidth: 200, maxWidth: 250)
+            .frame(width: 160)
             .background(Color.secondary.opacity(0.1))
 
             // 右侧展示区域
@@ -108,6 +108,7 @@ enum ThumbnailCase: CaseIterable, Identifiable {
     case defaultIcon
     case loadedSuccess
     case customView
+    case viewBuilder
     case emptyState
     case verboseMode
 
@@ -118,6 +119,7 @@ enum ThumbnailCase: CaseIterable, Identifiable {
         case .defaultIcon: return "默认图标"
         case .loadedSuccess: return "加载成功"
         case .customView: return "自定义默认视图"
+        case .viewBuilder: return "视图构建器"
         case .emptyState: return "空状态"
         case .verboseMode: return "详细模式"
         }
@@ -128,6 +130,7 @@ enum ThumbnailCase: CaseIterable, Identifiable {
         case .defaultIcon: return "doc"
         case .loadedSuccess: return "checkmark.circle"
         case .customView: return "square.stack.3d.up"
+        case .viewBuilder: return "paintbrush.pointed"
         case .emptyState: return "doc.questionmark"
         case .verboseMode: return "speaker.wave.2"
         }
@@ -141,6 +144,8 @@ enum ThumbnailCase: CaseIterable, Identifiable {
             return "从 URL 成功加载缩略图。ThumbnailView 会自动异步加载并显示缩略图。"
         case .customView:
             return "使用 defaultView 参数自定义后备视图，可以创建完全自定义的默认显示内容。"
+        case .viewBuilder:
+            return "使用 defaultViewBuilder 参数创建自定义默认封面。这是一个闭包，可以返回任意视图，提供了最大的灵活性来设计默认封面。"
         case .emptyState:
             return "当 url 参数为 nil 时，显示内置的文档或音乐图标作为占位符。"
         case .verboseMode:
@@ -168,6 +173,52 @@ enum ThumbnailCase: CaseIterable, Identifiable {
                 }
                 .frame(maxWidth: .infinity, maxHeight: .infinity)
             })
+            .frame(height: 300)
+            .frame(width: 300)
+        case .viewBuilder:
+            ThumbnailView(
+                url: .sample_invalid_url,
+                defaultViewBuilder: {
+                    VStack(spacing: 16) {
+                        ZStack {
+                            Circle()
+                                .fill(
+                                    LinearGradient(
+                                        colors: [.blue.opacity(0.3), .purple.opacity(0.3)],
+                                        startPoint: .topLeading,
+                                        endPoint: .bottomTrailing
+                                    )
+                                )
+                                .frame(width: 120, height: 120)
+
+                            Image(systemName: "music.note")
+                                .font(.system(size: 50))
+                                .foregroundStyle(
+                                    LinearGradient(
+                                        colors: [.blue, .purple],
+                                        startPoint: .topLeading,
+                                        endPoint: .bottomTrailing
+                                    )
+                                )
+                        }
+
+                        VStack(spacing: 4) {
+                            Text("No Artwork")
+                                .font(.headline)
+                                .foregroundStyle(.primary)
+
+                            Text("Custom Default Cover")
+                                .font(.caption)
+                                .foregroundStyle(.secondary)
+                        }
+                    }
+                    .frame(maxWidth: .infinity, maxHeight: .infinity)
+                    .background(
+                        RoundedRectangle(cornerRadius: 16)
+                            .fill(Color.secondary.opacity(0.1))
+                    )
+                }
+            )
             .frame(height: 300)
             .frame(width: 300)
         case .emptyState:
@@ -204,6 +255,33 @@ ThumbnailView(url: url, defaultView: {
         Text("No Artwork")
     }
 })
+"""
+        case .viewBuilder:
+            return """
+ThumbnailView(
+    url: url,
+    defaultViewBuilder: {
+        VStack(spacing: 16) {
+            ZStack {
+                Circle()
+                    .fill(LinearGradient(
+                        colors: [.blue, .purple],
+                        startPoint: .topLeading,
+                        endPoint: .bottomTrailing
+                    ))
+                    .frame(width: 120, height: 120)
+
+                Image(systemName: "music.note")
+                    .font(.system(size: 50))
+            }
+
+            Text("No Artwork")
+                .font(.headline)
+        }
+        .padding()
+        .background(Color.secondary.opacity(0.1))
+    }
+)
 """
         case .emptyState:
             return """

@@ -9,18 +9,20 @@ struct AudioPlayerView: View, SuperLog {
     let artist: String?
     let url: URL?
     let defaultArtwork: Image?
+    let defaultArtworkBuilder: (() -> any View)?
 
-    init(title: String, artist: String? = nil, url: URL? = nil, defaultArtwork: Image? = nil) {
+    init(title: String, artist: String? = nil, url: URL? = nil, defaultArtwork: Image? = nil, defaultArtworkBuilder: (() -> any View)? = nil) {
         self.title = title
         self.artist = artist
         self.url = url
         self.defaultArtwork = defaultArtwork
+        self.defaultArtworkBuilder = defaultArtworkBuilder
     }
 
     var body: some View {
         VStack(spacing: 20) {
             // 使用优化后的 ThumbnailView
-            ThumbnailView(url: url, defaultImage: defaultArtwork)
+            ThumbnailView(url: url, defaultImage: defaultArtwork, defaultViewBuilder: defaultArtworkBuilder)
                 .frame(maxWidth: .infinity, maxHeight: .infinity)
                 .padding(20)
 

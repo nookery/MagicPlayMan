@@ -13,6 +13,7 @@ struct ThumbnailView: View, SuperLog {
     private let verbose: Bool
     private let defaultImage: Image?
     private let defaultView: AnyView?
+    private let defaultViewBuilder: (() -> any View)?
     private let preferredThumbnailSize: CGFloat = 512 // 或其他合适的尺寸
     @State private var loadedArtwork: Image?
 
@@ -28,6 +29,7 @@ struct ThumbnailView: View, SuperLog {
         self.verbose = verbose
         self.defaultImage = defaultImage
         self.defaultView = nil
+        self.defaultViewBuilder = nil
     }
 
     init(
@@ -42,6 +44,7 @@ struct ThumbnailView: View, SuperLog {
         self.verbose = verbose
         self.defaultImage = defaultImage
         self.defaultView = nil
+        self.defaultViewBuilder = nil
     }
 
     init<Content: View>(
@@ -56,6 +59,23 @@ struct ThumbnailView: View, SuperLog {
         self.verbose = verbose
         self.defaultImage = nil
         self.defaultView = AnyView(defaultView())
+        self.defaultViewBuilder = nil
+    }
+
+    init(
+        url: URL? = nil,
+        verbose: Bool = false,
+        defaultImage: Image? = nil,
+        defaultViewBuilder: (() -> any View)? = nil
+    ) {
+        if verbose {
+            os_log("\(Self.t) Make ThumbnailView with defaultViewBuilder")
+        }
+        self.url = url
+        self.verbose = verbose
+        self.defaultImage = defaultImage
+        self.defaultView = nil
+        self.defaultViewBuilder = defaultViewBuilder
     }
 
     var body: some View {
@@ -77,13 +97,12 @@ struct ThumbnailView: View, SuperLog {
                                 }
                             }
                     } else {
-                        if let defaultImage = defaultImage {
-                            defaultImage
-                                .font(.system(size: min(geo.size.width, geo.size.height) * 0.3))
-                                .foregroundStyle(.secondary)
+                        if let defaultViewBuilder = defaultViewBuilder {
+                            AnyView(defaultViewBuilder())
+                                .frame(maxWidth: .infinity, maxHeight: .infinity)
                                 .onAppear {
                                     if verbose {
-                                        os_log("\(self.t) artwork default (image)")
+                                        os_log("\(self.t) artwork default (view builder)")
                                     }
                                 }
                         } else if let defaultView = defaultView {
@@ -91,6 +110,15 @@ struct ThumbnailView: View, SuperLog {
                                 .onAppear {
                                     if verbose {
                                         os_log("\(self.t) artwork default (view)")
+                                    }
+                                }
+                        } else if let defaultImage = defaultImage {
+                            defaultImage
+                                .font(.system(size: min(geo.size.width, geo.size.height) * 0.3))
+                                .foregroundStyle(.secondary)
+                                .onAppear {
+                                    if verbose {
+                                        os_log("\(self.t) artwork default (image)")
                                     }
                                 }
                         } else {

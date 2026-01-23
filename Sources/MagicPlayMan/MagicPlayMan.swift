@@ -38,6 +38,9 @@ public class MagicPlayMan: ObservableObject, SuperLog {
     /// 默认封面图，用于在音频缩略图无法获得时显示
     public var defaultArtwork: Image?
 
+    /// 默认封面图构建器，支持自定义视图作为默认封面
+    public var defaultArtworkBuilder: (() -> any View)?
+
     @Published public private(set) var items: [URL] = []
     @Published public private(set) var currentIndex: Int = -1
     @Published public private(set) var playMode: MagicPlayMode = .sequence

@@ -10,7 +10,8 @@ public extension MagicPlayMan {
         AudioPlayerView(
             title: url.title,
             url: url,
-            defaultArtwork: defaultArtwork
+            defaultArtwork: defaultArtwork,
+            defaultArtworkBuilder: defaultArtworkBuilder
         )
     }
 
@@ -20,7 +21,8 @@ public extension MagicPlayMan {
         AudioPlayerView(
             title: localization.noMediaSelected,
             artist: localization.selectMediaToPlay,
-            defaultArtwork: defaultArtwork
+            defaultArtwork: defaultArtwork,
+            defaultArtworkBuilder: defaultArtworkBuilder
         )
     }
 
@@ -106,7 +108,8 @@ public extension MagicPlayMan {
                 ThumbnailView(
                     url: currentAsset!,
                     verbose: verbose,
-                    defaultImage: defaultImage ?? defaultArtwork
+                    defaultImage: defaultImage ?? defaultArtwork,
+                    defaultViewBuilder: defaultImage == nil ? defaultArtworkBuilder : nil
                 )
             } else {
                 makeVideoView()

@@ -14,12 +14,14 @@ public extension MagicPlayMan {
     ///   - verbose: 是否启用详细日志模式，默认为 false
     ///   - locale: 本地化设置，默认为中文
     ///   - defaultArtwork: 默认封面图，用于在音频缩略图无法获得时显示
+    ///   - defaultArtworkBuilder: 默认封面图构建器，支持自定义视图作为默认封面
     convenience init(
         cacheDirectory: URL? = nil,
         playlistEnabled: Bool = true,
         verbose: Bool = false,
         locale: Locale = Locale(identifier: "zh_CN"),
-        defaultArtwork: Image? = nil
+        defaultArtwork: Image? = nil,
+        defaultArtworkBuilder: (() -> any View)? = nil
     ) {
         self.init()
 
@@ -32,6 +34,7 @@ public extension MagicPlayMan {
 
         // 设置默认封面图
         self.defaultArtwork = defaultArtwork
+        self.defaultArtworkBuilder = defaultArtworkBuilder
 
         // 设置详细日志模式
         self.verbose = verbose
