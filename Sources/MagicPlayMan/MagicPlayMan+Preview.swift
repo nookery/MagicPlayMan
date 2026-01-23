@@ -333,3 +333,7 @@ public extension MagicPlayMan {
     MagicPlayMan.PreviewView()
         .frame(width: 500, height: 700)
 }
+
+#Preview("MagicPlayMan Showcase") {
+    MagicPlayManShowcase()
+}

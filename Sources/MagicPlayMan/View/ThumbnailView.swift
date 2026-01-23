@@ -130,34 +130,8 @@ struct ThumbnailView: View, SuperLog {
     }
 }
 
-// MARK: - Preview
-
+#if DEBUG && os(macOS)
 #Preview("ThumbnailView") {
-    ThumbnailView(defaultImage: Image(systemName: .iconDoc))
-        .frame(height: 500)
-        .frame(width: 500)
+    ThumbnailViewShowcase()
 }
-
-#Preview("Success (MP3)") {
-    ThumbnailView(url: .sample_web_mp3_kennedy, defaultImage: Image(systemName: .iconMusic))
-        .frame(height: 500)
-        .frame(width: 500)
-}
-
-#Preview("Fallback (Invalid URL)") {
-    ThumbnailView(url: .sample_invalid_url, defaultView: {
-        VStack(spacing: 12) {
-            Image(systemName: .iconDoc)
-            Text(Localization.preview.noArtwork)
-                .font(.headline)
-                .foregroundStyle(.secondary)
-        }
-        .frame(maxWidth: .infinity, maxHeight: .infinity)
-    })
-    .frame(height: 500)
-    .frame(width: 500)
-}
-
-#Preview("MagicPlayMan") {
-    MagicPlayMan.PreviewView()
-}
+#endif

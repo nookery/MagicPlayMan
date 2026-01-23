@@ -13,11 +13,13 @@ public extension MagicPlayMan {
     ///   - playlistEnabled: 是否启用播放列表，默认为 true
     ///   - verbose: 是否启用详细日志模式，默认为 false
     ///   - locale: 本地化设置，默认为中文
+    ///   - defaultArtwork: 默认封面图，用于在音频缩略图无法获得时显示
     convenience init(
         cacheDirectory: URL? = nil,
         playlistEnabled: Bool = true,
         verbose: Bool = false,
-        locale: Locale = Locale(identifier: "zh_CN")
+        locale: Locale = Locale(identifier: "zh_CN"),
+        defaultArtwork: Image? = nil
     ) {
         self.init()
 
@@ -27,6 +29,9 @@ public extension MagicPlayMan {
         if verbose {
             os_log("\(self.t)🌍 Localization: \(locale.identifier)")
         }
+
+        // 设置默认封面图
+        self.defaultArtwork = defaultArtwork
 
         // 设置详细日志模式
         self.verbose = verbose

@@ -1,12 +1,12 @@
 import MagicKit
-import SwiftUI
 import MagicUI
+import SwiftUI
 
 /// 喜欢按钮视图
-/// 
+///
 /// 这是一个自观察的按钮视图，会自动监听 MagicPlayMan 的喜欢状态变化。
 /// 根据当前媒体资源的喜欢状态显示不同的图标和样式，支持喜欢/取消喜欢操作。
-/// 
+///
 /// ## 特性
 /// - 自动响应喜欢状态变化
 /// - 动态图标和样式切换（实心/空心爱心）
@@ -14,19 +14,19 @@ import MagicUI
 /// - 智能禁用状态管理
 /// - 异步操作处理
 /// - 自动分配唯一标识符
-/// 
+///
 /// ## 使用示例
 /// ```swift
 /// // 基础用法
 /// LikeButtonView(man: playMan, size: .large)
-/// 
+///
 /// // 自定义样式
 /// LikeButtonView(man: playMan, size: .large, style: .success, shape: .circle)
-/// 
+///
 /// // 悬停时显示形状
 /// LikeButtonView(man: playMan, shapeVisibility: .onHover)
 /// ```
-/// 
+///
 /// - Parameters:
 ///   - man: MagicPlayMan 实例，用于监听喜欢状态和触发喜欢操作
 ///   - size: 按钮尺寸，默认为 .regular
@@ -39,7 +39,7 @@ struct LikeButtonView: View {
     let style: MagicButton.Style?
     let shape: MagicButton.Shape
     let shapeVisibility: MagicButton.ShapeVisibility
-    
+
     /// 初始化方法
     init(
         man: MagicPlayMan,
@@ -65,7 +65,7 @@ struct LikeButtonView: View {
             disabledReason: !man.hasAsset ? "No media loaded" : nil,
             action: { completion in
                 Task {
-                    await man.toggleLike()
+                    man.toggleLike()
                     completion()
                 }
             }
@@ -80,5 +80,3 @@ struct LikeButtonView: View {
     MagicPlayMan
         .PreviewView()
 }
-
-

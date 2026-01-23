@@ -35,6 +35,9 @@ public class MagicPlayMan: ObservableObject, SuperLog {
     /// 本地化配置
     public var localization: Localization!
 
+    /// 默认封面图，用于在音频缩略图无法获得时显示
+    public var defaultArtwork: Image?
+
     @Published public private(set) var items: [URL] = []
     @Published public private(set) var currentIndex: Int = -1
     @Published public private(set) var playMode: MagicPlayMode = .sequence

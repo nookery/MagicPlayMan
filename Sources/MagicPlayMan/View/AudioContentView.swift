@@ -5,15 +5,17 @@ struct AudioContentView: View, SuperLog {
     nonisolated static let emoji = "🎧"
     let asset: MagicAsset
     let artwork: Image? // 允许外部传入缩略图
+    let defaultArtwork: Image? // 默认封面图，用于缩略图无法获得时显示
     @State private var localArtwork: Image? // 本地加载的缩略图
     @State private var errorMessage: String?
     let verbose: Bool
 
     @Environment(\.localization) private var loc
 
-    init(asset: MagicAsset, artwork: Image? = nil, verbose: Bool = true) {
+    init(asset: MagicAsset, artwork: Image? = nil, defaultArtwork: Image? = nil, verbose: Bool = true) {
         self.asset = asset
         self.artwork = artwork
+        self.defaultArtwork = defaultArtwork
         self.verbose = verbose
     }
 
@@ -21,7 +23,7 @@ struct AudioContentView: View, SuperLog {
         VStack(spacing: 30) {
             // 专辑封面
             Group {
-                if let artwork = artwork ?? localArtwork {
+                if let artwork = artwork ?? localArtwork ?? defaultArtwork {
                     artwork
                         .resizable()
                         .aspectRatio(contentMode: .fit)
@@ -106,47 +108,7 @@ struct AudioContentView: View, SuperLog {
     }
 }
 
-#Preview("Normal State") {
-    VStack {
-        AudioContentView(
-            asset: .init(
-                url: .documentsDirectory,
-                metadata: .init(
-                    title: "Test Song",
-                    artist: "Test Artist",
-                    album: "Test Album"
-                )
-            ),
-            verbose: true
-        )
-
-        AudioContentView(
-            asset: .init(
-                url: .documentsDirectory,
-                metadata: .init(
-                    title: "Test Song",
-                    artist: "Test Artist",
-                    album: "Test Album"
-                )
-            ),
-            verbose: false
-        )
-    }
-    .frame(width: 400)
-    .background(.ultraThinMaterial)
+#Preview("AudioContentView Showcase") {
+    AudioContentViewShowcase()
 }
 
-#Preview("Error State") {
-    let errorAsset = MagicAsset(
-        url: URL(string: "invalid://url")!,
-        metadata: .init(
-            title: "Error Test",
-            artist: "Error Artist",
-            album: "Error Album"
-        )
-    )
-
-    return AudioContentView(asset: errorAsset)
-        .frame(width: 400, height: 500)
-        .background(.ultraThinMaterial)
-}
