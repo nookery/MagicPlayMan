@@ -28,12 +28,8 @@ struct PlayPauseButtonView: View, SuperLog {
     @Environment(\.localization) private var loc
 
     private var disabledReason: String? {
-        if !man.hasAsset {
-            return loc.noMediaLoaded
-        } else if man.state.isDownloading {
-            return loc.downloading
-        } else if man.state.isLoading {
-            return loc.loadingWithDots
+        if !man.hasAsset || man.state.isDownloading || man.state.isLoading {
+            return man.state.localizedStateText(localization: loc)
         }
         return nil
     }

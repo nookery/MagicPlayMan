@@ -77,15 +77,11 @@ extension MagicPlayMan {
 
     @MainActor
     func setCurrentTime(_ time: TimeInterval) {
-        let verbose = false
         let oldTime = currentTime
         currentTime = time
 
         // 发送时间更新通知
         if oldTime != time {
-            if verbose {
-                os_log("setCurrentTime: \(time)")
-            }
             let progress = self.duration > 0 ? time / self.duration : 0
             sendTimeUpdate(currentTime: time, progress: progress)
         }

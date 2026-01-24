@@ -166,6 +166,7 @@ extension MagicPlayMan {
                 if self.verbose {
                     os_log("\(self.t)Remote command: Toggle like")
                 }
+                
                 self.toggleLike()
                 return .success
             }
@@ -179,9 +180,41 @@ extension MagicPlayMan {
     /// 更新Now Playing信息中心
     /// - Parameter info: 要设置的媒体信息字典
     private func updateNowPlayingCenter(with info: [String: Any]) {
+        #if os(iOS)
+            // 确保音频会话是活跃的，否则控制中心不会显示信息
+            do {
+                try AVAudioSession.sharedInstance().setActive(true)
+                if verbose {
+                    os_log("\(self.t)🔊 音频会话已激活")
+                }
+            } catch {
+                if verbose {
+                    os_log("\(self.t)❌ 激活音频会话失败: \(error.localizedDescription)")
+                }
+            }
+        #endif
+
         DispatchQueue.main.async {
             MPNowPlayingInfoCenter.default().nowPlayingInfo = info
             self.nowPlayingInfo = info
+
+            if self.verbose {
+                os_log("\(self.t)✅ 已设置 MPNowPlayingInfoCenter")
+                if let title = info[MPMediaItemPropertyTitle] as? String {
+                    os_log("\(self.t)   标题: \(title)")
+                }
+                if let duration = info[MPMediaItemPropertyPlaybackDuration] as? TimeInterval {
+                    os_log("\(self.t)   时长: \(duration)s")
+                }
+                if let rate = info[MPNowPlayingInfoPropertyPlaybackRate] as? Float {
+                    os_log("\(self.t)   播放速率: \(rate)")
+                }
+                if let hasArtwork = info[MPMediaItemPropertyArtwork] {
+                    os_log("\(self.t)   包含封面: 是")
+                } else {
+                    os_log("\(self.t)   包含封面: 否")
+                }
+            }
         }
     }
 
@@ -189,17 +222,17 @@ extension MagicPlayMan {
     /// - Parameters:
     ///   - includeThumbnail: 是否包含媒体缩略图，默认为true
     ///   - reason: 更新原因
-    func updateNowPlayingInfo(includeThumbnail: Bool = true, reason: String) {
+    internal func updateNowPlayingInfo(includeThumbnail: Bool = true, reason: String) {
         guard let asset = currentAsset else {
             if verbose {
-                os_log("\(self.t)Clearing now playing info: No asset")
+                os_log("\(self.t)❌ Clearing now playing info: No asset")
             }
             MPNowPlayingInfoCenter.default().nowPlayingInfo = nil
             return
         }
 
         if verbose {
-            os_log("\(self.t)🖼️ (\(reason)) Updating now playing info for: \(asset.title)")
+            os_log("\(self.t)🖼️ (\(reason)) Updating now playing info for: \(asset.title), includeThumbnail: \(includeThumbnail)")
         }
 
         var info: [String: Any] = [
@@ -218,20 +251,42 @@ extension MagicPlayMan {
             // 根据参数决定是否添加缩略图
             if includeThumbnail {
                 do {
-                    if let thumbnailResult = try await asset.platformThumbnail(
-                        size: CGSize(width: 600, height: 600), verbose: verbose && false, reason: self.className + ".updateNowPlayingInfo"
-                    ), let platformImage = thumbnailResult.image {
+                    let thumbnailResult = try await asset.platformThumbnail(
+                        size: CGSize(width: 600, height: 600), verbose: false, reason: self.className + ".updateNowPlayingInfo"
+                    )
+
+                    if verbose {
+                        os_log("\(self.t)✅ 缩略图加载完成")
+                    }
+
+                    if let result = thumbnailResult, let platformImage = result.image {
+                        if verbose {
+                            os_log("\(self.t)🖼️ 设置缩略图到 Now Playing Info，尺寸: \(platformImage.size.width) x \(platformImage.size.height)")
+                        }
                         info[MPMediaItemPropertyArtwork] = MPMediaItemArtwork(
                             boundsSize: platformImage.size,
                             requestHandler: { _ in platformImage }
                         )
+                    } else {
+                        if verbose {
+                            os_log("\(self.t)⚠️ 缩略图结果为空或 image 为空")
+                        }
                     }
                 } catch {
-                    // 缩略图加载失败，使用不带缩略图的info
+                    if verbose {
+                        os_log("\(self.t)❌ 缩略图加载失败: \(error.localizedDescription)")
+                    }
+                }
+            } else {
+                if verbose {
+                    os_log("\(self.t)⏭️ 跳过缩略图加载 (includeThumbnail: false)")
                 }
             }
 
             // 统一更新Now Playing信息中心
+            if verbose {
+                os_log("\(self.t)📤 更新 MPNowPlayingInfoCenter，包含 \(info.keys.count) 个字段")
+            }
             self.updateNowPlayingCenter(with: info)
         }
     }

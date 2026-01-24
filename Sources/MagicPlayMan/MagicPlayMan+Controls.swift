@@ -133,23 +133,19 @@ public extension MagicPlayMan {
     func pause(reason: String) {
         guard hasAsset else { return }
 
-        _player.pause()
         if self.verbose {
-            os_log("\(self.t)⏸️ (\(reason)) Paused playback")
+            os_log("\(self.t)⏸️ (\(reason)) Pause")
         }
-        updateNowPlayingInfo(includeThumbnail: false, reason: reason)
 
-        Task {
-            await self.setState(.paused, reason: reason)
-        }
+        _player.pause()
     }
 
     /// 开始播放当前加载的媒体资源，如果已播放完毕则从头开始播放
-     /// - Parameters:
+    /// - Parameters:
     ///   - reason: 更新原因
     func play(reason: String) {
         guard hasAsset else {
-            if verbose { os_log("\(self.t)Cannot play: no asset loaded") }
+            os_log(.error, "\(self.t)Cannot play: no asset loaded")
             return
         }
 
@@ -157,18 +153,13 @@ public extension MagicPlayMan {
             self.seek(time: 0, reason: self.className + ".play")
         }
 
+        // 让内核开始播放，MagicPlayMan初始化时监听了内核状态
         _player.play()
-
-        Task {
-            updateNowPlayingInfo(includeThumbnail: true, reason: reason)
-            await self.setState(.playing, reason: reason)
-        }
     }
 
     /// 加载并播放一个 URL
     /// - Parameters:
     ///   - url: 要播放的媒体 URL
-    ///   - title: 可选的标题，如果不提供则使用文件名
     ///   - autoPlay: 是否自动开始播放，默认为 true
     ///   - reason: 更新原因
     @MainActor
@@ -181,8 +172,8 @@ public extension MagicPlayMan {
         // 检查 URL 是否有效
         guard url.isFileURL || url.isNetworkURL else {
             if verbose { os_log("\(self.t)Invalid URL scheme: \(url.scheme ?? "nil")") }
-            await stop(reason: reason)
-            setState(.failed(.playbackError("Invalid URL scheme")), reason: reason)
+            await stop(reason: reason + "invalidURL")
+            setState(.failed(.playbackError("Invalid URL scheme")), reason: reason + ".play")
             return
         }
 
@@ -190,15 +181,16 @@ public extension MagicPlayMan {
         if url.isVideo == false && url.isAudio == false {
             if verbose { os_log("\(self.t)Unsupported media type: \(url.pathExtension)") }
             await stop(reason: reason)
-            setState(.failed(.unsupportedFormat(url.pathExtension)), reason: reason)
+            setState(.failed(.unsupportedFormat(url.pathExtension)), reason: reason + ".play")
             return
         }
 
         // 加载资源
-        await loadFromURL(url, autoPlay: autoPlay, reason: reason)
+        await loadFromURL(url, autoPlay: autoPlay, reason: reason + ".play")
 
         if isPlaylistEnabled {
-            append(url)        }
+            append(url)
+        }
     }
 
     /// 播放上一首
@@ -239,7 +231,7 @@ public extension MagicPlayMan {
     ///   - reason: 更新原因
     func seek(time: TimeInterval, reason: String) {
         guard hasAsset else {
-            if verbose { os_log("\(self.t)⚠️ Cannot seek: no asset loaded") }
+            os_log(.error, "\(self.t)⚠️ Cannot seek: no asset loaded")
             return
         }
 
@@ -247,13 +239,10 @@ public extension MagicPlayMan {
         if verbose {
             os_log("\(self.t)⏩ (\(reason)) Seeking to \(Int(time))s")
         }
-        _player.seek(to: targetTime) { [weak self] finished in
-            guard let self = self, finished else { return }
-            Task { @MainActor in
-                self.setCurrentTime(time)
-                self.updateNowPlayingInfo(includeThumbnail: false, reason: reason)
-            }
-        }
+        _player.seek(to: targetTime)
+
+        // 更新 Now Playing Info 中的播放时间，否则控制中心/锁屏界面的进度条不会更新
+        updateNowPlayingInfo(includeThumbnail: true, reason: reason + ".seek")
     }
 
     /// 设置当前资源的喜欢状态
@@ -284,7 +273,7 @@ public extension MagicPlayMan {
         }
         // 通知订阅者喜欢状态变化
         events.onLikeStatusChanged.send((asset: asset, isLiked: isLiked))
-        updateNowPlayingInfo(includeThumbnail: false, reason: reason)
+        updateNowPlayingInfo(includeThumbnail: false, reason: reason + ".setLike")
     }
 
     /// 静音控制
@@ -332,9 +321,6 @@ public extension MagicPlayMan {
         if self.verbose {
             os_log("\(self.t)⏹️ (\(reason)) Stopped playback")
         }
-        
-        updateNowPlayingInfo(includeThumbnail: false, reason: reason)
-        await self.setState(.stopped, reason: reason)
     }
 
     /// 切换当前资源的喜欢状态
@@ -353,7 +339,7 @@ public extension MagicPlayMan {
             pause(reason: reason)
         case .paused, .stopped:
             play(reason: reason)
-        case .loading, .failed, .idle:
+        case .loading, .failed, .idle, .willPlay:
             // 在这些状态下不执行任何操作
             if verbose { os_log("\(self.t)Cannot toggle playback in current state: \(self.state.stateText)") }
             break

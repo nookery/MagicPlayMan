@@ -12,9 +12,8 @@ extension MagicPlayMan {
     ///   - autoPlay: 是否自动开始播放，默认为 true
     ///   - reason: 更新原因
     func loadFromURL(_ url: URL, autoPlay: Bool = true, reason: String) async {
-//        await stop(reason: reason)
         await self.setCurrentURL(url)
-        await self.setState(.loading(.preparing), reason: reason)
+        await self.setState(.loading(.preparing), reason: reason + ".loadFromURL")
 
         // 检查文件是否存在
         guard url.isFileExist else {
@@ -25,38 +24,6 @@ extension MagicPlayMan {
         await downloadAndCache(url, reason: reason)
 
         let item = AVPlayerItem(url: url)
-
-        // 使用 Combine 监听状态，避免 @Sendable 捕获问题
-        let statusObserver = item.publisher(for: \.status)
-            .receive(on: DispatchQueue.main)
-            .sink { [weak self] status in
-                guard let self else { return }
-                switch status {
-                case .readyToPlay:
-                    Task { @MainActor in
-                        // 播放器准备就绪后，清理下载监听器
-                        self.cleanupDownloadObservers()
-
-                        self.setDuration(item.duration.seconds)
-                        if self.isLoading {
-                            self.setState(autoPlay ? .playing : .paused, reason: reason)
-                            if autoPlay { self.play(reason: reason) }
-                        }
-                    }
-                case .failed:
-                    let message = item.error?.localizedDescription ?? "Unknown error"
-                    Task { @MainActor in
-                        // 播放失败时也要清理下载监听器
-                        self.cleanupDownloadObservers()
-
-                        self.setState(.failed(.playbackError(message)), reason: reason)
-                    }
-                default:
-                    break
-                }
-            }
-
-        cancellables.insert(statusObserver)
         _player.replaceCurrentItem(with: item)
     }
 
@@ -80,7 +47,7 @@ extension MagicPlayMan {
 
         // 添加节流控制
         let progressSubject = CurrentValueSubject<Double, Never>(0)
-        let progressObserver = url.onDownloading(verbose: self.verbose, caller: "MagicPlayMan") { progress in
+        let progressObserver = url.onDownloading(verbose: self.verbose, caller: self.className + ".downloadAndCache") { progress in
             // 这里接收进度更新，应该在后台线程处理
             DispatchQueue.global().async {
                 progressSubject.send(progress)
@@ -116,15 +83,12 @@ extension MagicPlayMan {
             do {
                 try await url.download(verbose: self.verbose, reason: "MagicPlayMan requested")
             } catch {
-                await MainActor.run {
+//                await MainActor.run {
                     // 下载失败时清理监听器
                     self.cleanupDownloadObservers()
 
                     self.setState(.failed(.networkError(error.localizedDescription)), reason: "\(reason).\(self.className).downloadAndCache")
-                    if self.verbose {
-                        os_log("\(self.t)Download failed: \(error.localizedDescription)")
-                    }
-                }
+//                }
             }
         }
     }

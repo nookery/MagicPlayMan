@@ -65,7 +65,7 @@ struct LikeButtonView: View {
             disabledReason: !man.hasAsset ? "No media loaded" : nil,
             action: { completion in
                 Task {
-                    man.toggleLike()
+                    await man.toggleLike()
                     completion()
                 }
             }
