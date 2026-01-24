@@ -218,9 +218,9 @@ extension MagicPlayMan {
             // 根据参数决定是否添加缩略图
             if includeThumbnail {
                 do {
-                    if let (platformImage, _) = try await asset.platformThumbnail(
+                    if let thumbnailResult = try await asset.platformThumbnail(
                         size: CGSize(width: 600, height: 600), verbose: verbose && false, reason: self.className + ".updateNowPlayingInfo"
-                    ), let platformImage = platformImage {
+                    ), let platformImage = thumbnailResult.image {
                         info[MPMediaItemPropertyArtwork] = MPMediaItemArtwork(
                             boundsSize: platformImage.size,
                             requestHandler: { _ in platformImage }

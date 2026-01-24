@@ -138,7 +138,7 @@ struct ThumbnailView: View, SuperLog {
             .task(id: url) {
                 if let url = url {
                     do {
-                        loadedArtwork = try await url.thumbnail(
+                        if let thumbnailResult = try await url.thumbnail(
                             size: CGSize(
                                 width: preferredThumbnailSize,
                                 height: preferredThumbnailSize
@@ -146,7 +146,11 @@ struct ThumbnailView: View, SuperLog {
                             useDefaultIcon: false,
                             verbose: self.verbose,
                             reason: "MagicPlayMan." + self.className + ".task"
-                        )
+                        ), let swiftUIImage = thumbnailResult.toSwiftUIImage() {
+                            loadedArtwork = swiftUIImage
+                        } else {
+                            loadedArtwork = nil
+                        }
                     } catch {
                         loadedArtwork = nil
                     }

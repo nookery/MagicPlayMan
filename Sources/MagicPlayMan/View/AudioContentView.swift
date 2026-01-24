@@ -111,8 +111,9 @@ struct AudioContentView: View, SuperLog {
 
         Task {
             do {
-                if let image = try await asset.url.thumbnail(size: CGSize(width: 600, height: 600), verbose: self.verbose, reason: "MagicPlayMan." + self.className + ".loadArtwork") {
-                    localArtwork = image
+                if let thumbnailResult = try await asset.url.thumbnail(size: CGSize(width: 600, height: 600), verbose: self.verbose, reason: "MagicPlayMan." + self.className + ".loadArtwork"),
+                   let swiftUIImage = thumbnailResult.toSwiftUIImage() {
+                    localArtwork = swiftUIImage
                 } else {
                     errorMessage = loc.noArtworkAvailable
                 }
