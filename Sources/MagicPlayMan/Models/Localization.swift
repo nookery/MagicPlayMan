@@ -24,6 +24,13 @@ public struct Localization {
         }
     }
 
+    public var loadingWithDots: String {
+        switch locale.language.languageCode?.identifier {
+        case "zh": return "加载中..."
+        default: return "Loading..."
+        }
+    }
+
     public var error: String {
         switch locale.language.languageCode?.identifier {
         case "zh": return "错误"
@@ -186,6 +193,13 @@ public struct Localization {
         switch locale.language.languageCode?.identifier {
         case "zh": return "未选择媒体"
         default: return "No media selected"
+        }
+    }
+
+    public var noMediaLoaded: String {
+        switch locale.language.languageCode?.identifier {
+        case "zh": return "未加载媒体"
+        default: return "No media loaded"
         }
     }
 

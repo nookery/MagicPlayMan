@@ -25,6 +25,18 @@ struct PlayPauseButtonView: View, SuperLog {
     // 精简订阅：只订阅按钮所需的状态，避免不相关变化触发刷新
     @ObservedObject var man: MagicPlayMan
     let size: MagicButton.Size
+    @Environment(\.localization) private var loc
+
+    private var disabledReason: String? {
+        if !man.hasAsset {
+            return loc.noMediaLoaded
+        } else if man.state.isDownloading {
+            return loc.downloading
+        } else if man.state.isLoading {
+            return loc.loadingWithDots
+        }
+        return nil
+    }
 
     var body: some View {
         MagicButton.simple(
@@ -32,8 +44,7 @@ struct PlayPauseButtonView: View, SuperLog {
             style: .primary,
             size: size,
             shape: .circle,
-            disabledReason: !man.hasAsset ? "No media loaded" :
-                man.state.isLoading ? "Loading..." : nil,
+            disabledReason: disabledReason,
             action: {
                 man.toggle(reason: self.className)
             }
