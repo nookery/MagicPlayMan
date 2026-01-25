@@ -239,10 +239,10 @@ public extension MagicPlayMan {
         if verbose {
             os_log("\(self.t)⏩ (\(reason)) Seeking to \(Int(time))s")
         }
-        _player.seek(to: targetTime)
-
-        // 更新 Now Playing Info 中的播放时间，否则控制中心/锁屏界面的进度条不会更新
-        updateNowPlayingInfo(includeThumbnail: true, reason: reason + ".seek")
+        _player.seek(to: targetTime) {_ in 
+            // 更新 Now Playing Info 中的播放时间，否则控制中心/锁屏界面的进度条不会更新
+            self.updateNowPlayingInfo(includeThumbnail: true, reason: reason + ".seek")
+        }        
     }
 
     /// 设置当前资源的喜欢状态
