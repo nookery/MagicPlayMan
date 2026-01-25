@@ -26,14 +26,16 @@ struct RewindButtonView: View {
     @ObservedObject var man: MagicPlayMan
     let size: MagicButton.Size
 
+    @Environment(\.localization) private var loc
+
     var body: some View {
         MagicButton.simple(
             icon: .iconGobackward10,
             style: .secondary,
             size: size,
             shape: .circle,
-            disabledReason: !man.hasAsset ? "No media loaded" :
-                man.state.isLoading ? "Loading..." : nil,
+            disabledReason: !man.hasAsset ? loc.noMediaLoaded :
+                man.state.isLoading ? loc.loadingWithDots : nil,
             action: { man.skipBackward() }
         )
     }
@@ -42,9 +44,8 @@ struct RewindButtonView: View {
 // MARK: - Preview
 
 #Preview("MagicPlayMan") {
-    MagicPlayMan
-        .PreviewView()
-        
+    MagicPlayMan.getPreviewView()
+        .frame(height: 600)
 }
 
 

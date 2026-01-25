@@ -55,6 +55,8 @@ struct LikeButtonView: View {
         self.shapeVisibility = shapeVisibility
     }
 
+    @Environment(\.localization) private var loc
+
     var body: some View {
         MagicButton(
             icon: man.isCurrentAssetLiked ? "heart.fill" : "heart",
@@ -62,12 +64,10 @@ struct LikeButtonView: View {
             size: size,
             shape: shape,
             shapeVisibility: shapeVisibility,
-            disabledReason: !man.hasAsset ? "No media loaded" : nil,
+            disabledReason: !man.hasAsset ? loc.noMediaLoaded : nil,
             action: { completion in
-                Task {
-                    await man.toggleLike()
-                    completion()
-                }
+                man.toggleLike()
+                completion()
             }
         )
         .magicId(man.likeButtonId)
@@ -78,5 +78,6 @@ struct LikeButtonView: View {
 
 #Preview("MagicPlayMan") {
     MagicPlayMan
-        .PreviewView()
+        .getPreviewView()
+        .frame(height: 600)
 }

@@ -1,23 +1,23 @@
 import MagicKit
-import SwiftUI
 import MagicUI
+import SwiftUI
 
 /// 播放/暂停按钮视图
-/// 
+///
 /// 这是一个自观察的按钮视图，会自动监听 MagicPlayMan 的播放状态变化。
 /// 根据当前状态显示播放图标或暂停图标，并自动更新禁用状态。
-/// 
+///
 /// ## 特性
 /// - 自动响应播放状态变化
 /// - 智能禁用状态管理
 /// - 支持自定义按钮尺寸
 /// - 使用 MagicButton 的简单样式
-/// 
+///
 /// ## 使用示例
 /// ```swift
 /// PlayPauseButtonView(man: playMan, size: .large)
 /// ```
-/// 
+///
 /// - Parameters:
 ///   - man: MagicPlayMan 实例，用于监听播放状态和触发播放控制
 ///   - size: 按钮尺寸，默认为 .regular
@@ -52,8 +52,6 @@ struct PlayPauseButtonView: View, SuperLog {
 // MARK: - Preview
 
 #Preview("MagicPlayMan") {
-    MagicPlayMan
-        .PreviewView()
+    MagicPlayMan.getPreviewView()
+        .frame(height: 600)
 }
-
-
