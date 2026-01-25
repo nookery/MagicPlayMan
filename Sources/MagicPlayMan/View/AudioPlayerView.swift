@@ -21,8 +21,7 @@ struct AudioPlayerView: View, SuperLog {
 
     var body: some View {
         VStack(spacing: 20) {
-            // 使用优化后的 ThumbnailView
-            ThumbnailView(url: url, defaultImage: defaultArtwork, defaultViewBuilder: defaultArtworkBuilder)
+            url?.makeAvatarView()
                 .frame(maxWidth: .infinity, maxHeight: .infinity)
                 .padding(20)
 
