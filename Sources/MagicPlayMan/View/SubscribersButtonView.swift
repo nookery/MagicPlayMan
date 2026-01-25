@@ -43,7 +43,7 @@ struct SubscribersButtonView: View {
 
 #Preview("MagicPlayMan") {
     MagicPlayMan.getPreviewView()
-        
+        .frame(height: 600)
 }
 
 

@@ -6,6 +6,8 @@ struct MediaPickerButton: View {
     let selectedName: String?
     let onSelect: (URL) -> Void
 
+    @Environment(\.localization) private var loc
+
     var body: some View {
         Menu {
             ForEach(man.samples, id: \.self) { sample in
@@ -21,7 +23,7 @@ struct MediaPickerButton: View {
         } label: {
             HStack {
                 Image(systemName: .iconPlay)
-                Text(selectedName ?? "Select Media")
+                Text(selectedName ?? loc.selectMedia)
                 Image(systemName: "chevron.down")
             }
             .padding(.horizontal, 12)
@@ -36,4 +38,5 @@ struct MediaPickerButton: View {
 
 #Preview("MagicPlayMan") {
     MagicPlayMan.getPreviewView()
+        .frame(height: 600)
 }

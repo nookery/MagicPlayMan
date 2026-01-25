@@ -351,19 +351,96 @@ public struct Localization {
         default: return "Check if the URL format is correct"
         }
     }
-    
-    // MARK: - Invalid URL
+
     public var invalidURL: String {
         switch locale.language.languageCode?.identifier {
         case "zh": return "无效的 URL"
         default: return "Invalid URL"
         }
     }
-    
+
     public var invalidURLReason: String {
         switch locale.language.languageCode?.identifier {
         case "zh": return "提供的 URL 无效"
         default: return "The provided URL is invalid"
+        }
+    }
+
+    // MARK: - Button Disabled Reasons
+
+    public var playlistDisabledNoPreviousHandler: String {
+        switch locale.language.languageCode?.identifier {
+        case "zh": return "播放列表已禁用且没有上一曲处理器"
+        default: return "Playlist is disabled and no handler for previous track"
+        }
+    }
+
+    public var playlistDisabledNoNextHandler: String {
+        switch locale.language.languageCode?.identifier {
+        case "zh": return "播放列表已禁用且没有下一曲处理器"
+        default: return "Playlist is disabled and no handler for next track"
+        }
+    }
+
+    public var firstTrack: String {
+        switch locale.language.languageCode?.identifier {
+        case "zh": return "这是第一首曲目"
+        default: return "This is the first track"
+        }
+    }
+
+    public var lastTrack: String {
+        switch locale.language.languageCode?.identifier {
+        case "zh": return "这是最后一首曲目"
+        default: return "This is the last track"
+        }
+    }
+
+    // MARK: - Play Mode
+
+    public var sequentialPlay: String {
+        switch locale.language.languageCode?.identifier {
+        case "zh": return "顺序播放"
+        default: return "Sequential Play"
+        }
+    }
+
+    public var singleTrackLoop: String {
+        switch locale.language.languageCode?.identifier {
+        case "zh": return "单曲循环"
+        default: return "Single Track Loop"
+        }
+    }
+
+    public var shufflePlay: String {
+        switch locale.language.languageCode?.identifier {
+        case "zh": return "随机播放"
+        default: return "Shuffle Play"
+        }
+    }
+
+    public var repeatAll: String {
+        switch locale.language.languageCode?.identifier {
+        case "zh": return "全部循环"
+        default: return "Repeat All"
+        }
+    }
+
+    // MARK: - Playlist
+
+    public var playlistDisabled: String {
+        switch locale.language.languageCode?.identifier {
+        case "zh": return "播放列表已禁用\n启用播放列表以查看和管理曲目"
+        default: return "Playlist is disabled\nEnable playlist to view and manage tracks"
+        }
+    }
+
+    // MARK: - Media Picker
+
+    public var selectMedia: String {
+        switch locale.language.languageCode?.identifier {
+        case "zh": return "选择媒体"
+        default: return "Select Media"
         }
     }
 }

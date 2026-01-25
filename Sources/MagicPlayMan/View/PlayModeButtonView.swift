@@ -42,7 +42,7 @@ struct PlayModeButtonView: View {
 
 #Preview("MagicPlayMan") {
     MagicPlayMan.getPreviewView()
-        
+        .frame(height: 600)
 }
 
 

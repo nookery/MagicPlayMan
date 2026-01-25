@@ -88,13 +88,6 @@ public extension MagicPlayMan {
         MagicPlayProgressView(man: self)
     }
 
-    /// 创建支持的媒体格式视图
-    /// - Returns: 返回一个展示所有支持的媒体格式的视图
-    /// 用于向用户展示播放器支持播放哪些类型的媒体文件
-    func makeSupportedFormatsView() -> some View {
-        FormatInfoView(formats: SupportedFormat.allFormats)
-    }
-
     /// 创建订阅者列表视图
     /// - Returns: 返回订阅者列表弹窗内容
     func makeSubscribersView() -> some View {
@@ -136,4 +129,5 @@ public extension MagicPlayMan {
 
 #Preview("MagicPlayMan") {
     MagicPlayMan.getPreviewView()
+        .frame(height: 600)
 }

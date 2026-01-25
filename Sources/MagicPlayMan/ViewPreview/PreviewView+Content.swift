@@ -1,18 +1,14 @@
 import MagicKit
 import SwiftUI
 
-// MARK: - Content Area Components
-
 extension MagicPlayManPreviewView {
     /// 主内容区域
     var mainContentArea: some View {
-        ZStack {
-            VStack(spacing: 0) {
-                contentWithSidebar
-                controlsSection
-                bottomSection
-            }
+        VStack(spacing: 0) {
+            contentWithSidebar
+            controlsSection
         }
+        .background(LinearGradient.aurora.opacity(0.1))
     }
 
     /// 带侧边栏的内容区域
@@ -47,6 +43,8 @@ extension MagicPlayManPreviewView {
                 }
             }
         }
+        .infinite()
+        .background(LinearGradient.winter)
     }
 
     /// 播放列表侧边栏
@@ -56,13 +54,11 @@ extension MagicPlayManPreviewView {
             .background(.ultraThinMaterial)
             .transition(.move(edge: .trailing))
     }
-
-    /// 底部区域
-    var bottomSection: some View {
-        GroupBox {
-            EmptyView()
-        }
-        .padding()
-    }
 }
 
+// MARK: - Preview
+
+#Preview("MagicPlayMan") {
+    MagicPlayManPreviewView()
+        .frame(width: 600, height: 700)
+}

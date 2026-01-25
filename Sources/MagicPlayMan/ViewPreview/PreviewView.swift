@@ -86,12 +86,10 @@ public struct MagicPlayManPreviewView: View {
         .onAppear {
             setupEventObservation()
         }
-        .clipShape(RoundedRectangle(cornerRadius: 16))
         .shadowNone()
         .localization(_playMan.wrappedValue.localization)
         .infinite()
     }
-
 }
 
 // MARK: - Preview
@@ -100,4 +98,3 @@ public struct MagicPlayManPreviewView: View {
     MagicPlayManPreviewView()
         .frame(width: 600, height: 700)
 }
-

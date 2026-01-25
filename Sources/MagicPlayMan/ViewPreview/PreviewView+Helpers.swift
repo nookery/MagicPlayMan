@@ -1,8 +1,6 @@
 import MagicKit
 import SwiftUI
 
-// MARK: - Helper Views
-
 extension MagicPlayManPreviewView {
     /// 下载进度视图
     func downloadingProgress(_ progress: Double, title: String) -> some View {
@@ -56,3 +54,9 @@ extension MagicPlayManPreviewView {
     }
 }
 
+// MARK: - Preview
+
+#Preview("MagicPlayMan") {
+    MagicPlayManPreviewView()
+        .frame(width: 600, height: 700)
+}

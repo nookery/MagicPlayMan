@@ -1,8 +1,6 @@
 import MagicKit
 import SwiftUI
 
-// MARK: - Toolbar Components
-
 extension MagicPlayManPreviewView {
     /// 顶部工具栏
     var toolbarView: some View {
@@ -35,3 +33,9 @@ extension MagicPlayManPreviewView {
     }
 }
 
+// MARK: - Preview
+
+#Preview("MagicPlayMan") {
+    MagicPlayManPreviewView()
+        .frame(width: 600, height: 700)
+}

@@ -25,19 +25,21 @@ struct NextButtonView: View {
     @ObservedObject var man: MagicPlayMan
     let size: MagicButton.Size
 
+    @Environment(\.localization) private var loc
+
     /// 计算按钮的禁用原因
-    /// 
+    ///
     /// 根据当前状态返回相应的禁用提示信息：
-    /// - 无媒体加载时：显示 "No media loaded"
+    /// - 无媒体加载时：显示本地化的 "No media loaded"
     /// - 播放列表禁用且无导航订阅者时：显示相应提示
-    /// - 播放列表末曲时：显示 "This is the last track"
+    /// - 播放列表末曲时：显示本地化的 "This is the last track"
     var disabledReason: String? {
         if !man.hasAsset {
-            return "No media loaded"
+            return loc.noMediaLoaded
         } else if !man.isPlaylistEnabled && !man.events.hasNavigationSubscribers {
-            return "Playlist is disabled and no handler for next track"
+            return loc.playlistDisabledNoNextHandler
         } else if man.isPlaylistEnabled && man.currentIndex >= man.items.count - 1 {
-            return "This is the last track"
+            return loc.lastTrack
         }
         return nil
     }
@@ -56,8 +58,16 @@ struct NextButtonView: View {
 
 // MARK: - Preview
 
+#Preview("PreviousButton") {
+    MagicPlayMan(locale: .current)
+        .makeNextButtonView()
+        .frame(height: 500)
+        .frame(width: 500)
+}
+
 #Preview("MagicPlayMan") {
     MagicPlayMan.getPreviewView()
+        .frame(height: 600)
 }
 
 

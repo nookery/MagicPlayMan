@@ -1,8 +1,6 @@
 import MagicKit
 import SwiftUI
 
-// MARK: - Control Components
-
 extension MagicPlayManPreviewView {
     /// 控制区域
     var controlsSection: some View {
@@ -43,3 +41,9 @@ extension MagicPlayManPreviewView {
     }
 }
 
+// MARK: - Preview
+
+#Preview("MagicPlayMan") {
+    MagicPlayManPreviewView()
+        .frame(width: 600, height: 700)
+}

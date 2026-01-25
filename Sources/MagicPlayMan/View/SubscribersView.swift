@@ -54,3 +54,10 @@ public extension MagicPlayMan {
         }
     }
 }
+
+// MARK: - Preview
+
+#Preview("MagicPlayMan") {
+    MagicPlayMan.getPreviewView()
+        .frame(height: 600)
+}

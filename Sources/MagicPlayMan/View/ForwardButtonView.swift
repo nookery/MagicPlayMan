@@ -26,14 +26,16 @@ struct ForwardButtonView: View {
     @ObservedObject var man: MagicPlayMan
     let size: MagicButton.Size
 
+    @Environment(\.localization) private var loc
+
     var body: some View {
         MagicButton.simple(
             icon: .iconGoforward10,
             style: .secondary,
             size: size,
             shape: .circle,
-            disabledReason: !man.hasAsset ? "No media loaded" :
-                man.state.isLoading ? "Loading..." : nil,
+            disabledReason: !man.hasAsset ? loc.noMediaLoaded :
+                man.state.isLoading ? loc.loadingWithDots : nil,
             action: { man.skipForward() }
         )
     }
@@ -44,6 +46,7 @@ struct ForwardButtonView: View {
 #Preview("MagicPlayMan") {
     MagicPlayMan
         .getPreviewView()
+        .frame(height: 600)
 }
 
 

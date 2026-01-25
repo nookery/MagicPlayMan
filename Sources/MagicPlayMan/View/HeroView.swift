@@ -11,7 +11,7 @@ struct HeroView: View, SuperLog {
 
     let url: URL
     let verbose: Bool
-    let preferredSize: CGFloat  // 首选尺寸
+    let preferredSize: CGFloat // 首选尺寸
 
     init(url: URL, verbose: Bool = false, preferredSize: CGFloat = 512) {
         self.url = url
@@ -29,15 +29,18 @@ struct HeroView: View, SuperLog {
                 .magicSize(size)
                 .magicAvatarShape(.roundedRectangle(cornerRadius: 12))
                 .frame(width: size, height: size)
-                .id(url)  // 关键：强制在 URL 改变时重建视图
+                .id(url) // 关键：强制在 URL 改变时重建视图
                 .magicCentered()
         }
     }
 }
 
-#if DEBUG && os(macOS)
 #Preview("HeroView") {
     HeroView(url: .sample_web_mp3_kennedy)
         .frame(width: 400, height: 400)
 }
-#endif
+
+#Preview("HeroView") {
+    HeroView(url: .sample_temp_jpg)
+        .frame(width: 400, height: 400)
+}

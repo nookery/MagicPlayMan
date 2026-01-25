@@ -26,13 +26,15 @@ struct PlaylistButtonView: View {
     @ObservedObject var man: MagicPlayMan
     let size: MagicButton.Size
 
+    @Environment(\.localization) private var loc
+
     var body: some View {
         MagicButton(
             icon: .iconList,
             style: .secondary,
             size: size,
             shape: .circle,
-            disabledReason: !man.isPlaylistEnabled ? "Playlist is disabled\nEnable playlist to view and manage tracks" : nil,
+            disabledReason: !man.isPlaylistEnabled ? loc.playlistDisabled : nil,
             popoverContent: man.isPlaylistEnabled ? AnyView(
                 ZStack {
                     man.makePlaylistView()
@@ -48,6 +50,7 @@ struct PlaylistButtonView: View {
 
 #Preview("MagicPlayMan") {
     MagicPlayMan.getPreviewView()
+        .frame(height: 600)
 }
 
 

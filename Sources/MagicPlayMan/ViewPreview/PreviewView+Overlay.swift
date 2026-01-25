@@ -2,8 +2,6 @@ import MagicKit
 import MagicUI
 import SwiftUI
 
-// MARK: - Overlay Components
-
 extension MagicPlayManPreviewView {
     /// 加载状态覆盖层
     func LoadingOverlay(state: PlaybackState.LoadingState, assetTitle: String) -> some View {
@@ -64,5 +62,12 @@ extension MagicPlayManPreviewView {
         )
         .padding(.top, 20)
     }
+}
+
+// MARK: - Preview
+
+#Preview("MagicPlayMan") {
+    MagicPlayManPreviewView()
+        .frame(width: 600, height: 700)
 }
 
