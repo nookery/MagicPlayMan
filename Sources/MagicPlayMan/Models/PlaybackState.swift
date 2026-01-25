@@ -23,6 +23,7 @@ public enum PlaybackState: Equatable {
         case networkError(String)
         case playbackError(String)
         case unsupportedFormat(String)
+        case invalidURL(String)
 
         public var errorDescription: String? {
             switch self {
@@ -36,6 +37,8 @@ public enum PlaybackState: Equatable {
                 return "Playback error: \(message)"
             case .unsupportedFormat(let ext):
                 return "Unsupported format: \(ext)"
+            case .invalidURL(let url):
+                return "Invalid URL: \(url)"
             }
         }
 
@@ -52,6 +55,8 @@ public enum PlaybackState: Equatable {
                 return "\(localization.playbackError): \(message)"
             case .unsupportedFormat(let ext):
                 return "\(localization.unsupportedFormat): \(ext)"
+            case .invalidURL(let url):
+                return "\(localization.invalidURL): \(url)"
             }
         }
 
@@ -68,6 +73,8 @@ public enum PlaybackState: Equatable {
                 return localization.playbackProblem
             case .unsupportedFormat:
                 return localization.mediaTypeNotSupported
+            case .invalidURL:
+                return localization.invalidURLReason
             }
         }
 
@@ -84,6 +91,8 @@ public enum PlaybackState: Equatable {
                 return localization.tryReloadMedia
             case .unsupportedFormat:
                 return localization.chooseSupportedFormat
+            case .invalidURL:
+                return localization.checkURLFormat
             }
         }
 
@@ -99,6 +108,8 @@ public enum PlaybackState: Equatable {
                 return "There was a problem during playback"
             case .unsupportedFormat:
                 return "The selected media type is not supported"
+            case .invalidURL:
+                return "The provided URL is invalid"
             }
         }
 
@@ -114,6 +125,8 @@ public enum PlaybackState: Equatable {
                 return "Try reloading the media file"
             case .unsupportedFormat:
                 return "Choose a supported audio or video format"
+            case .invalidURL:
+                return "Check if the URL format is correct"
             }
         }
     }

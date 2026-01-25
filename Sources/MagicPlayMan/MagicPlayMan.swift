@@ -144,6 +144,7 @@ extension MagicPlayMan {
     func setCurrentURL(_ url: URL?) {
         let oldURL = currentURL
         currentURL = url
+        self.setCurrentTime(0)
 
         if let url = currentURL {
             events.onCurrentURLChanged.send(url)

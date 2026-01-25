@@ -345,6 +345,27 @@ public struct Localization {
         default: return "Choose a supported audio or video format"
         }
     }
+    public var checkURLFormat: String {
+        switch locale.language.languageCode?.identifier {
+        case "zh": return "检查 URL 格式是否正确"
+        default: return "Check if the URL format is correct"
+        }
+    }
+    
+    // MARK: - Invalid URL
+    public var invalidURL: String {
+        switch locale.language.languageCode?.identifier {
+        case "zh": return "无效的 URL"
+        default: return "Invalid URL"
+        }
+    }
+    
+    public var invalidURLReason: String {
+        switch locale.language.languageCode?.identifier {
+        case "zh": return "提供的 URL 无效"
+        default: return "The provided URL is invalid"
+        }
+    }
 }
 
 // MARK: - SwiftUI Environment Key

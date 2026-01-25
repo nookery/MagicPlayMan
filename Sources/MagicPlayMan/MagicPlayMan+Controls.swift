@@ -162,9 +162,13 @@ public extension MagicPlayMan {
     @MainActor
     func play(_ url: URL, autoPlay: Bool = true, reason: String) async {
         if self.verbose {
-            os_log("\(self.t)📢 (\(reason)) Play: \(url.title), AutoPlay: \(autoPlay)")
+            os_log("\(self.t)🚀 (\(reason)) Play: \(url.title), AutoPlay: \(autoPlay)")
         }
+        
         self.setCurrentURL(url)
+        
+        // 立即暂停当前播放，避免显示新歌信息但还在放旧歌
+        _player.pause()
         
         // 检查文件是否存在
         guard url.isFileExist else {
@@ -174,29 +178,37 @@ public extension MagicPlayMan {
 
         // 检查 URL 是否有效
         guard url.isFileURL || url.isNetworkURL else {
-            if verbose { os_log("\(self.t)Invalid URL scheme: \(url.scheme ?? "nil")") }
-            await stop(reason: reason + "invalidURL")
-            setState(.failed(.playbackError("Invalid URL scheme")), reason: reason + ".play")
+            await stop(reason: reason + self.className + ".invalidURL")
+            setState(.failed(.invalidURL(url.scheme ?? "nil")), reason: reason + ".play")
             return
         }
 
         // 判断媒体类型
         if url.isVideo == false && url.isAudio == false {
-            if verbose { os_log("\(self.t)Unsupported media type: \(url.pathExtension)") }
             await stop(reason: reason)
             setState(.failed(.unsupportedFormat(url.pathExtension)), reason: reason + ".play")
             return
         }
 
-        self.setState(.loading(.preparing), reason: reason + ".loadFromURL")
+        self.setState(.loading(.preparing), reason: reason + ".play")
 
-        downloadAndCache(url, reason: reason)
-
-        let item = AVPlayerItem(url: url)
-        _player.replaceCurrentItem(with: item)
-        
-        if autoPlay {
-            self.playCurrent(reason: reason + ".play")
+        downloadAndCache(url, reason: reason) { [weak self] in
+            guard let self = self else { return }
+            
+            // 关键：确保当前仍是同一个 URL (用户可能在下载期间切歌了)
+            guard self.currentURL == url else {
+                if self.verbose {
+                    os_log("\(self.t)⚠️ URL changed during download, ignoring playback request for: \(url.title)")
+                }
+                return
+            }
+            
+            let item = AVPlayerItem(url: url)
+            self._player.replaceCurrentItem(with: item)
+            
+            if autoPlay {
+                self.playCurrent(reason: reason + ".play")
+            }
         }
 
         if isPlaylistEnabled {

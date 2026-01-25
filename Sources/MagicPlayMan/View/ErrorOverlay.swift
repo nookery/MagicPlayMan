@@ -50,6 +50,8 @@ struct ErrorOverlay: View {
             return "\(loc.playbackError): \(message)"
         case let .unsupportedFormat(ext):
             return "\(loc.unsupportedFormat): \(ext)"
+        case let .invalidURL(url):
+            return "\(loc.invalidURL): \(url)"
         }
     }
 }

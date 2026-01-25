@@ -10,17 +10,20 @@ extension MagicPlayMan {
     /// - Parameters:
     ///   - url: 要下载的资源 URL
     ///   - reason: 更新原因
+    ///   - onFinished: 下载完成后的回调（主线程执行）
     @MainActor
-    func downloadAndCache(_ url: URL, reason: String) {
+    func downloadAndCache(_ url: URL, reason: String, onFinished: (() -> Void)? = nil) {
         guard cache != nil else {
+            onFinished?()
             return
         }
 
         if url.isDownloaded {
+            onFinished?()
             return
         }
 
-        self.setState(.loading(.connecting), reason: "\(reason).\(self.className).downloadAndCache")
+        self.setState(.loading(.downloading(0)), reason: "\(reason).\(self.className).downloadAndCache")
 
         // 添加节流控制
         let progressSubject = CurrentValueSubject<Double, Never>(0)
@@ -30,7 +33,7 @@ extension MagicPlayMan {
 
         // 使用 Combine 的 throttle 操作符限制更新频率
         let progressUpdateObserver = progressSubject
-            .throttle(for: .milliseconds(3000), scheduler: DispatchQueue.main, latest: true)
+            .throttle(for: .milliseconds(1000), scheduler: DispatchQueue.main, latest: true)
             .sink { [weak self] progress in
                 guard let self = self else { return }
                 Task {
@@ -44,9 +47,11 @@ extension MagicPlayMan {
         cancellables.insert(progressUpdateObserver)
 
         // 监听下载完成
-        let finishObserver = url.onDownloadFinished(verbose: self.verbose, caller: "MagicPlayMan") { [weak self] in
+        let finishObserver = url.onDownloadFinished(verbose: self.verbose, caller: self.className) { [weak self] in
             guard let self = self else { return }
             self.cleanupDownloadObservers()
+            // 下载完成后执行回调
+            onFinished?()
         }
 
         // 存储下载监听器引用
@@ -55,7 +60,7 @@ extension MagicPlayMan {
         // 开始下载
         Task {
             do {
-                try await url.download(verbose: self.verbose, reason: "MagicPlayMan requested")
+                try await url.download(verbose: self.verbose, reason: self.className + ".downloadAndCache")
             } catch {
                 // 下载失败时清理监听器
                 self.cleanupDownloadObservers()
