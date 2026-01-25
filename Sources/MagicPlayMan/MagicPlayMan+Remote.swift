@@ -46,7 +46,7 @@ extension MagicPlayMan {
                 if self.verbose {
                     os_log("\(self.t)Remote command: Play")
                 }
-                self.play(reason: "commandCenter.playCommand")
+                self.resume(reason: "commandCenter.playCommand")
                 return .success
             }
 

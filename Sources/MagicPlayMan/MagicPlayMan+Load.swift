@@ -11,7 +11,7 @@ extension MagicPlayMan {
     ///   - url: 媒体文件的 URL
     ///   - autoPlay: 是否自动开始播放，默认为 true
     ///   - reason: 更新原因
-    func loadFromURL(_ url: URL, autoPlay: Bool = true, reason: String) async {
+    internal func loadFromURL(_ url: URL, autoPlay: Bool = true, reason: String) async {
         await self.setCurrentURL(url)
         await self.setState(.loading(.preparing), reason: reason + ".loadFromURL")
 
@@ -25,6 +25,10 @@ extension MagicPlayMan {
 
         let item = AVPlayerItem(url: url)
         _player.replaceCurrentItem(with: item)
+        
+        if autoPlay {
+            self.resume(reason: reason + ".loadFromURL")
+        }
     }
 
     /// 下载并缓存资源

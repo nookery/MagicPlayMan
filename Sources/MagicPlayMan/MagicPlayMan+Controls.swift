@@ -140,23 +140,6 @@ public extension MagicPlayMan {
         _player.pause()
     }
 
-    /// 开始播放当前加载的媒体资源，如果已播放完毕则从头开始播放
-    /// - Parameters:
-    ///   - reason: 更新原因
-    func play(reason: String) {
-        guard hasAsset else {
-            os_log(.error, "\(self.t)Cannot play: no asset loaded")
-            return
-        }
-
-        if currentTime == duration {
-            self.seek(time: 0, reason: self.className + ".play")
-        }
-
-        // 让内核开始播放，MagicPlayMan初始化时监听了内核状态
-        _player.play()
-    }
-
     /// 加载并播放一个 URL
     /// - Parameters:
     ///   - url: 要播放的媒体 URL
@@ -215,6 +198,23 @@ public extension MagicPlayMan {
         }
     }
 
+    /// 开始播放当前加载的媒体资源，如果已播放完毕则从头开始播放
+    /// - Parameters:
+    ///   - reason: 更新原因
+    func resume(reason: String) {
+        guard hasAsset else {
+            os_log(.error, "\(self.t)Cannot play: no asset loaded")
+            return
+        }
+
+        if currentTime == duration {
+            self.seek(time: 0, reason: self.className + ".play")
+        }
+
+        // 让内核开始播放，MagicPlayMan初始化时监听了内核状态
+        _player.play()
+    }
+
     /// 从播放列表中移除指定索引的资源
     /// - Parameter index: 要移除的资源在播放列表中的索引位置
     func removeFromPlaylist(at index: Int) {
@@ -239,10 +239,10 @@ public extension MagicPlayMan {
         if verbose {
             os_log("\(self.t)⏩ (\(reason)) Seeking to \(Int(time))s")
         }
-        _player.seek(to: targetTime) {_ in 
+        _player.seek(to: targetTime) { _ in
             // 更新 Now Playing Info 中的播放时间，否则控制中心/锁屏界面的进度条不会更新
             self.updateNowPlayingInfo(includeThumbnail: true, reason: reason + ".seek")
-        }        
+        }
     }
 
     /// 设置当前资源的喜欢状态
@@ -338,7 +338,7 @@ public extension MagicPlayMan {
         case .playing:
             pause(reason: reason)
         case .paused, .stopped:
-            play(reason: reason)
+            resume(reason: reason)
         case .loading, .failed, .idle, .willPlay:
             // 在这些状态下不执行任何操作
             if verbose { os_log("\(self.t)Cannot toggle playback in current state: \(self.state.stateText)") }
