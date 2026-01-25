@@ -104,7 +104,7 @@ internal extension MagicPlayMan {
             let progress = self.duration > 0 ? currentTime / self.duration : 0
 
             // 更新内部状态并发送通知
-            self.setCurrentTime(currentTime)
+            self.setCurrentTime(currentTime, reason: self.className + ".setupPlayer")
             self.setProgress(progress)
         }
     }
