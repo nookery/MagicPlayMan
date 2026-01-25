@@ -1,0 +1,40 @@
+{
+  "permissions": {
+    "allow": [
+      "mcp__zai-mcp-server__diagnose_error_screenshot",
+      "Bash(swift build:*)",
+      "Bash(xcodebuild:*)",
+      "Bash(git add:*)",
+      "Bash(git commit:*)",
+      "Bash(find:*)",
+      "Bash(ls:*)",
+      "Bash(grep:*)",
+      "Bash(git restore:*)",
+      "Bash(git rm:*)",
+      "Bash(mkdir:*)",
+      "Bash(git mv:*)",
+      "Bash(tee:*)",
+      "Bash(rm:*)",
+      "Bash(cat:*)",
+      "Bash(swift test:*)",
+      "Bash(swift package:*)"
+    ]
+  },
+  "enabledPlugins": {
+    "context7@claude-plugins-official": true,
+    "github@claude-plugins-official": true,
+    "feature-dev@claude-plugins-official": true,
+    "commit-commands@claude-plugins-official": true,
+    "document-skills@anthropic-agent-skills": true
+  },
+  "mcpServers": {
+    "web-reader": {
+      "command": "npx",
+      "args": ["-y", "@peacememories/web-reader-mcp"]
+    },
+    "web-search-prime": {
+      "command": "npx",
+      "args": ["-y", "@peacememories/web-search-prime-mcp"]
+    }
+  }
+}

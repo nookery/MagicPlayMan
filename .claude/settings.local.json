@@ -1,14 +1,8 @@
 {
   "permissions": {
     "allow": [
-      "Bash(swift build:*)",
-      "mcp__ide__getDiagnostics",
-      "Bash(cat:*)",
-      "Bash(xcodebuild:*)",
-      "Bash(git add:*)",
-      "Bash(git rm:*)",
-      "Bash(git commit:*)",
-      "Bash(grep:*)"
+      "Bash(./build-all.sh)",
+      "Bash(xargs cat:*)"
     ]
   }
 }
