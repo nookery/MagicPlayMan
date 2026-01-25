@@ -389,3 +389,10 @@ public extension View {
         environment(\.localization, localization)
     }
 }
+
+// MARK: - Preview Helper
+
+extension Localization {
+    /// 用于预览的本地化实例（中文）
+    public static let preview = Localization(locale: Locale(identifier: "zh_CN"))
+}

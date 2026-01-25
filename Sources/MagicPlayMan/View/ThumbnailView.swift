@@ -2,10 +2,6 @@ import MagicKit
 import OSLog
 import SwiftUI
 
-extension Localization {
-    static let preview = Localization(locale: Locale(identifier: "zh_CN"))
-}
-
 struct ThumbnailView: View, SuperLog {
     nonisolated static let emoji = "🖥️"
 
@@ -16,6 +12,7 @@ struct ThumbnailView: View, SuperLog {
     private let defaultViewBuilder: (() -> any View)?
     private let preferredThumbnailSize: CGFloat = 512 // 或其他合适的尺寸
     @State private var loadedArtwork: Image?
+    @State private var downloadState: UUID = UUID() // 用于在下载完成时触发重新加载
 
     init(
         url: URL? = nil,
@@ -135,7 +132,16 @@ struct ThumbnailView: View, SuperLog {
                 }
                 .frame(maxWidth: .infinity, maxHeight: .infinity)
             }
-            .task(id: url) {
+            .onChange(of: url?.isDownloaded) { oldValue, newValue in
+                // 当下载状态从 false 变为 true 时，触发重新加载缩略图
+                if newValue == true && oldValue == false {
+                    if verbose {
+                        os_log("\(self.t)✅ 下载完成，重新加载缩略图")
+                    }
+                    downloadState = UUID() // 触发 task 重新执行
+                }
+            }
+            .task(id: Tuple2(url: url, state: downloadState)) {
                 if let url = url {
                     do {
                         if let thumbnailResult = try await url.thumbnail(
@@ -160,6 +166,12 @@ struct ThumbnailView: View, SuperLog {
             }
         }
     }
+}
+
+// 用于 task id 的简单元组结构
+struct Tuple2: Hashable {
+    let url: URL?
+    let state: UUID
 }
 
 #if DEBUG && os(macOS)
