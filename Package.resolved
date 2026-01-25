@@ -23,8 +23,8 @@
       "kind" : "remoteSourceControl",
       "location" : "https://github.com/nookery/MagicKit.git",
       "state" : {
-        "revision" : "0822501edb5fe2327238db67896a2debabb9ab7b",
-        "version" : "1.3.4"
+        "revision" : "6c3f4c7b0444bb18a6b6746c76446355e2f2fb2b",
+        "version" : "1.3.5"
       }
     },
     {
