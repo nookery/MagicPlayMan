@@ -100,20 +100,35 @@ internal extension MagicPlayMan {
             queue: .main
         ) { [weak self] time in
             guard let self = self else { return }
-            // 🔧 移除多余的Task包装，避免线程竞态
-            // 时间观察器已经在.main队列上运行，不需要额外的@MainActor包装
             let currentTime = time.seconds
             let progress = self.duration > 0 ? currentTime / self.duration : 0
 
             // 更新内部状态并发送通知
-            self.setCurrentTime(currentTime)
+            self.setCurrentTime(currentTime, reason: self.className + ".setupPlayer")
             self.setProgress(progress)
         }
     }
 
     /// 设置观察者
     func setupObservers() {
-        // 监听播放状态
+        // 监听内部的Player的播放状态
+        _player.publisher(for: \.status)
+            .receive(on: DispatchQueue.main)
+            .sink { [weak self] status in
+                guard let self = self else { return }
+                Task { @MainActor in
+                    switch status {
+                    case .readyToPlay:
+                        self.setState(.paused, reason: self.className + ".systemObserver.readyToPlay")
+                        // 资源准备好后更新 Now Playing Info
+                        self.updateNowPlayingInfo(includeThumbnail: true, reason: self.className + ".systemObserver.readyToPlay")
+                    @unknown default:
+                        break
+                    }
+                }
+            }
+            .store(in: &cancellables)
+
         _player.publisher(for: \.timeControlStatus)
             .receive(on: DispatchQueue.main)
             .sink { [weak self] status in
@@ -121,16 +136,21 @@ internal extension MagicPlayMan {
                 Task { @MainActor in
                     switch status {
                     case .playing:
-                        if case .loading = self.state {
-                            self.setState(.playing, reason: self.className + ".systemObserver")
-                        }
+                        self.setState(.playing, reason: self.className + ".systemObserver")
+                        // 播放状态变化时更新 Now Playing Info
+                        self.updateNowPlayingInfo(includeThumbnail: true, reason: self.className + ".systemObserver.playing")
                     case .paused:
-                        if case .playing = self.state {
-                            self.setState(self.currentTime == 0 ? .stopped : .paused, reason: self.className + ".systemObserver")
+                        self.updateNowPlayingInfo(includeThumbnail: false, reason: self.className + ".systemObserver.paused")
+                        
+                        // 如果是下载状态，无需更新状态
+                        if self.state.isDownloading {
+                            return
                         }
+                        
+                        self.setState(self.currentTime == 0 ? .stopped : .paused, reason: self.className + ".systemObserver.paused")
                     case .waitingToPlayAtSpecifiedRate:
                         if case .playing = self.state {
-                            self.setState(.loading(.buffering), reason: self.className + ".systemObserver")
+                            self.setState(.loading(.buffering), reason: self.className + ".systemObserver.waitingToPlayAtSpecifiedRate")
                         }
                     @unknown default:
                         break
@@ -151,6 +171,21 @@ internal extension MagicPlayMan {
                         } else if !isEmpty, case .loading(.buffering) = self.state {
                             self.setState(.playing, reason: "bufferObserver")
                         }
+                    }
+                }
+            }
+            .store(in: &cancellables)
+
+        // 监听资源时长变化
+        _player.publisher(for: \.currentItem?.duration)
+            .receive(on: DispatchQueue.main)
+            .sink { [weak self] duration in
+                guard let self = self, let duration = duration else { return }
+                let durationInSeconds = duration.seconds
+                // 只有在时长有效且发生变化时才更新
+                if durationInSeconds.isFinite && durationInSeconds > 0 {
+                    Task { @MainActor in
+                        self.setDuration(durationInSeconds)
                     }
                 }
             }
@@ -194,14 +229,14 @@ internal extension MagicPlayMan {
                             os_log("\(self.t)播放列表已启用，即将播放下一首：\(nextAsset.title)")
                         }
                         Task {
-                            await self.loadFromURL(nextAsset, reason: "播放列表已启用，即将播放下一首")
+                            await self.play(nextAsset, reason: "播放列表已启用，即将播放下一首")
                         }
                     } else {
                         if verbose {
                             os_log("\(self.t)播放列表已到末尾")
                         }
                         Task { @MainActor in
-                            self.setState(.stopped, reason: "playlistFinished")
+                            self.setState(.stopped, reason: self.className + ".systemObserver.playlistFinished")
                         }
                     }
                 }

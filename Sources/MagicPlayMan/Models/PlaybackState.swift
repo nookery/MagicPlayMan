@@ -4,6 +4,7 @@ import SwiftUI
 public enum PlaybackState: Equatable {
     case idle
     case loading(LoadingState)
+    case willPlay
     case playing
     case paused
     case stopped
@@ -22,6 +23,7 @@ public enum PlaybackState: Equatable {
         case networkError(String)
         case playbackError(String)
         case unsupportedFormat(String)
+        case invalidURL(String)
 
         public var errorDescription: String? {
             switch self {
@@ -35,6 +37,8 @@ public enum PlaybackState: Equatable {
                 return "Playback error: \(message)"
             case .unsupportedFormat(let ext):
                 return "Unsupported format: \(ext)"
+            case .invalidURL(let url):
+                return "Invalid URL: \(url)"
             }
         }
 
@@ -51,9 +55,47 @@ public enum PlaybackState: Equatable {
                 return "\(localization.playbackError): \(message)"
             case .unsupportedFormat(let ext):
                 return "\(localization.unsupportedFormat): \(ext)"
+            case .invalidURL(let url):
+                return "\(localization.invalidURL): \(url)"
             }
         }
-        
+
+        /// 获取本地化的失败原因
+        public func localizedFailureReason(localization: Localization) -> String {
+            switch self {
+            case .noAsset:
+                return localization.pleaseSelectMedia
+            case .invalidAsset:
+                return localization.fileFormatNotSupportedOrCorrupted
+            case .networkError:
+                return localization.networkConnectionProblem
+            case .playbackError:
+                return localization.playbackProblem
+            case .unsupportedFormat:
+                return localization.mediaTypeNotSupported
+            case .invalidURL:
+                return localization.invalidURLReason
+            }
+        }
+
+        /// 获取本地化的恢复建议
+        public func localizedRecoverySuggestion(localization: Localization) -> String {
+            switch self {
+            case .noAsset:
+                return localization.selectMediaFromLibrary
+            case .invalidAsset:
+                return localization.tryDifferentMedia
+            case .networkError:
+                return localization.checkInternetConnection
+            case .playbackError:
+                return localization.tryReloadMedia
+            case .unsupportedFormat:
+                return localization.chooseSupportedFormat
+            case .invalidURL:
+                return localization.checkURLFormat
+            }
+        }
+
         public var failureReason: String? {
             switch self {
             case .noAsset:
@@ -66,9 +108,11 @@ public enum PlaybackState: Equatable {
                 return "There was a problem during playback"
             case .unsupportedFormat:
                 return "The selected media type is not supported"
+            case .invalidURL:
+                return "The provided URL is invalid"
             }
         }
-        
+
         public var recoverySuggestion: String? {
             switch self {
             case .noAsset:
@@ -81,6 +125,8 @@ public enum PlaybackState: Equatable {
                 return "Try reloading the media file"
             case .unsupportedFormat:
                 return "Choose a supported audio or video format"
+            case .invalidURL:
+                return "Check if the URL format is correct"
             }
         }
     }
@@ -127,7 +173,7 @@ public enum PlaybackState: Equatable {
         switch self {
         case .idle, .loading, .failed:
             return false
-        case .playing, .paused, .stopped:
+        case .willPlay, .playing, .paused, .stopped:
             return true
         }
     }
@@ -139,6 +185,8 @@ public enum PlaybackState: Equatable {
             return "circle.dashed"
         case .loading:
             return "arrow.clockwise"
+        case .willPlay:
+            return "play.circle"
         case .playing:
             return "play.circle.fill"
         case .paused:
@@ -156,6 +204,8 @@ public enum PlaybackState: Equatable {
         case .idle:
             return .secondary
         case .loading:
+            return .blue
+        case .willPlay:
             return .blue
         case .playing:
             return .green
@@ -182,6 +232,8 @@ public enum PlaybackState: Equatable {
             case .downloading(let progress):
                 return "Downloading... \(Int(progress * 100))%"
             }
+        case .willPlay:
+            return "Will Play"
         case .playing:
             return "Playing"
         case .paused:
@@ -222,6 +274,8 @@ public enum PlaybackState: Equatable {
             case .downloading(let progress):
                 return "\(localization.downloading) \(Int(progress * 100))%"
             }
+        case .willPlay:
+            return localization.willPlay
         case .playing:
             return localization.playing
         case .paused:
@@ -306,6 +360,7 @@ public struct StateView: View {
         PlaybackState.idle.makeStateView(localization: localization)
         PlaybackState.loading(.connecting).makeStateView(assetTitle: "Test Media", localization: localization)
         PlaybackState.loading(.downloading(0.45)).makeStateView(assetTitle: "Downloading...", localization: localization)
+        PlaybackState.willPlay.makeStateView(assetTitle: "Ready to Play", localization: localization)
         PlaybackState.playing.makeStateView(assetTitle: "Now Playing", localization: localization)
         PlaybackState.paused.makeStateView(assetTitle: "Paused Media", localization: localization)
         PlaybackState.stopped.makeStateView(localization: localization)

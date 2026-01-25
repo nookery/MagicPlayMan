@@ -17,10 +17,10 @@ public struct Localization {
         }
     }
 
-    public var loading: String {
+    public var loadingWithDots: String {
         switch locale.language.languageCode?.identifier {
-        case "zh": return "加载中"
-        default: return "Loading"
+        case "zh": return "加载中..."
+        default: return "Loading..."
         }
     }
 
@@ -189,6 +189,13 @@ public struct Localization {
         }
     }
 
+    public var noMediaLoaded: String {
+        switch locale.language.languageCode?.identifier {
+        case "zh": return "未加载媒体"
+        default: return "No media loaded"
+        }
+    }
+
     public var selectMediaToPlay: String {
         switch locale.language.languageCode?.identifier {
         case "zh": return "选择一个媒体文件开始播放"
@@ -232,6 +239,13 @@ public struct Localization {
         }
     }
 
+    public var willPlay: String {
+        switch locale.language.languageCode?.identifier {
+        case "zh": return "即将播放"
+        default: return "Will Play"
+        }
+    }
+
     public var playing: String {
         switch locale.language.languageCode?.identifier {
         case "zh": return "播放中"
@@ -257,6 +271,99 @@ public struct Localization {
         switch locale.language.languageCode?.identifier {
         case "zh": return "失败"
         default: return "Failed"
+        }
+    }
+
+    // MARK: - Error Failure Reasons
+    public var pleaseSelectMedia: String {
+        switch locale.language.languageCode?.identifier {
+        case "zh": return "请选择一个媒体文件来播放"
+        default: return "Please select a media file to play"
+        }
+    }
+
+    public var fileFormatNotSupportedOrCorrupted: String {
+        switch locale.language.languageCode?.identifier {
+        case "zh": return "文件格式不支持或文件已损坏"
+        default: return "The file format is not supported or the file is corrupted"
+        }
+    }
+
+    public var networkConnectionProblem: String {
+        switch locale.language.languageCode?.identifier {
+        case "zh": return "网络连接出现问题"
+        default: return "There was a problem with the network connection"
+        }
+    }
+
+    public var playbackProblem: String {
+        switch locale.language.languageCode?.identifier {
+        case "zh": return "播放期间出现问题"
+        default: return "There was a problem during playback"
+        }
+    }
+
+    public var mediaTypeNotSupported: String {
+        switch locale.language.languageCode?.identifier {
+        case "zh": return "选择的媒体类型不受支持"
+        default: return "The selected media type is not supported"
+        }
+    }
+
+    // MARK: - Error Recovery Suggestions
+    public var selectMediaFromLibrary: String {
+        switch locale.language.languageCode?.identifier {
+        case "zh": return "从资料库中选择一个媒体文件"
+        default: return "Select a media file from your library"
+        }
+    }
+
+    public var tryDifferentMedia: String {
+        switch locale.language.languageCode?.identifier {
+        case "zh": return "尝试使用不同的媒体文件"
+        default: return "Try with a different media file"
+        }
+    }
+
+    public var checkInternetConnection: String {
+        switch locale.language.languageCode?.identifier {
+        case "zh": return "检查您的网络连接然后重试"
+        default: return "Check your internet connection and try again"
+        }
+    }
+
+    public var tryReloadMedia: String {
+        switch locale.language.languageCode?.identifier {
+        case "zh": return "尝试重新加载媒体文件"
+        default: return "Try reloading the media file"
+        }
+    }
+
+    public var chooseSupportedFormat: String {
+        switch locale.language.languageCode?.identifier {
+        case "zh": return "选择支持的音频或视频格式"
+        default: return "Choose a supported audio or video format"
+        }
+    }
+    public var checkURLFormat: String {
+        switch locale.language.languageCode?.identifier {
+        case "zh": return "检查 URL 格式是否正确"
+        default: return "Check if the URL format is correct"
+        }
+    }
+    
+    // MARK: - Invalid URL
+    public var invalidURL: String {
+        switch locale.language.languageCode?.identifier {
+        case "zh": return "无效的 URL"
+        default: return "Invalid URL"
+        }
+    }
+    
+    public var invalidURLReason: String {
+        switch locale.language.languageCode?.identifier {
+        case "zh": return "提供的 URL 无效"
+        default: return "The provided URL is invalid"
         }
     }
 }

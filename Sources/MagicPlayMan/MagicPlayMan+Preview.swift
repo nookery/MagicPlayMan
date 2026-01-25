@@ -162,7 +162,7 @@ public extension MagicPlayMan {
                 if case let .failed(error) = playMan.state, let asset = playMan.currentAsset {
                     ErrorOverlay(error: error, asset: asset) {
                         Task {
-                            await playMan.loadFromURL(asset, reason: "MagicPlayMan.PreviewView")
+                            await playMan.play(asset, reason: "MagicPlayMan.PreviewView")
                         }
                     }
                 }
