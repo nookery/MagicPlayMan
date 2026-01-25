@@ -1,8 +1,0 @@
-{
-  "permissions": {
-    "allow": [
-      "Bash(./build-all.sh)",
-      "Bash(xargs cat:*)"
-    ]
-  }
-}
