@@ -101,44 +101,26 @@ public extension MagicPlayMan {
     /// - 当资源为音频时，显示音频缩略图，不包括音频的标题和艺术家
     /// - 当资源为视频时，显示视频播放视图
     func makeHeroView(verbose: Bool = false, defaultImage: Image? = nil) -> some View {
-        GeometryReader { geo in
-            let availableSize = min(geo.size.width, geo.size.height)
-            let padding: CGFloat = 40
-            let size = availableSize - padding
-
-            Group {
-                if self.currentAsset == nil {
-                    self.makeEmptyView()
-                } else if self.currentAsset!.isAudio {
-                    self.currentAsset!.makeAvatarView(verbose: verbose)
-                        .magicSize(size)
-                        .magicAvatarShape(.roundedRectangle(cornerRadius: 12))
-                } else {
-                    self.makeVideoView()
-                }
+        Group {
+            if currentAsset == nil {
+                makeEmptyView()
+            } else if currentAsset!.isAudio {
+                HeroView(url: currentAsset!, verbose: verbose)
+            } else {
+                makeVideoView()
             }
-            .frame(maxWidth: .infinity, maxHeight: .infinity)
         }
     }
 
     func makeHeroView<Content: View>(verbose: Bool = false, @ViewBuilder defaultView: () -> Content) -> some View {
-        GeometryReader { geo in
-            let availableSize = min(geo.size.width, geo.size.height)
-            let padding: CGFloat = 40
-            let size = availableSize - padding
-
-            Group {
-                if self.currentAsset == nil {
-                    self.makeEmptyView()
-                } else if self.currentAsset!.isAudio {
-                    self.currentAsset!.makeAvatarView(verbose: verbose)
-                        .magicSize(size)
-                        .magicAvatarShape(.roundedRectangle(cornerRadius: 12))
-                } else {
-                    self.makeVideoView()
-                }
+        Group {
+            if currentAsset == nil {
+                makeEmptyView()
+            } else if currentAsset!.isAudio {
+                HeroView(url: currentAsset!, verbose: verbose)
+            } else {
+                makeVideoView()
             }
-            .frame(maxWidth: .infinity, maxHeight: .infinity)
         }
     }
 }

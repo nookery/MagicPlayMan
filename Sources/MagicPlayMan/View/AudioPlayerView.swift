@@ -22,6 +22,7 @@ struct AudioPlayerView: View, SuperLog {
     var body: some View {
         VStack(spacing: 20) {
             url?.makeAvatarView()
+                .id(url)  // Force view refresh on URL change
                 .frame(maxWidth: .infinity, maxHeight: .infinity)
                 .padding(20)
 
