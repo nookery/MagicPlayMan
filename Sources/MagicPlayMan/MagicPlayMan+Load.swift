@@ -6,37 +6,12 @@ import OSLog
 import SwiftUI
 
 extension MagicPlayMan {
-    /// 从 URL 加载媒体
-    /// - Parameters:
-    ///   - url: 媒体文件的 URL
-    ///   - autoPlay: 是否自动开始播放，默认为 true
-    ///   - reason: 更新原因
-    internal func loadFromURL(_ url: URL, autoPlay: Bool = true, reason: String) async {
-        await self.setCurrentURL(url)
-        await self.setState(.loading(.preparing), reason: reason + ".loadFromURL")
-
-        // 检查文件是否存在
-        guard url.isFileExist else {
-            await self.setState(.failed(.invalidAsset), reason: reason)
-            return
-        }
-
-        await downloadAndCache(url, reason: reason)
-
-        let item = AVPlayerItem(url: url)
-        _player.replaceCurrentItem(with: item)
-        
-        if autoPlay {
-            self.resume(reason: reason + ".loadFromURL")
-        }
-    }
-
     /// 下载并缓存资源
     /// - Parameters:
     ///   - url: 要下载的资源 URL
     ///   - reason: 更新原因
     @MainActor
-    private func downloadAndCache(_ url: URL, reason: String) {
+    func downloadAndCache(_ url: URL, reason: String) {
         guard cache != nil else {
             return
         }
@@ -45,17 +20,12 @@ extension MagicPlayMan {
             return
         }
 
-        Task {
-            await self.setState(.loading(.connecting), reason: "\(reason).\(self.className).downloadAndCache")
-        }
+        self.setState(.loading(.connecting), reason: "\(reason).\(self.className).downloadAndCache")
 
         // 添加节流控制
         let progressSubject = CurrentValueSubject<Double, Never>(0)
         let progressObserver = url.onDownloading(verbose: self.verbose, caller: self.className + ".downloadAndCache") { progress in
-            // 这里接收进度更新，应该在后台线程处理
-            DispatchQueue.global().async {
-                progressSubject.send(progress)
-            }
+            progressSubject.send(progress)
         }
 
         // 使用 Combine 的 throttle 操作符限制更新频率
@@ -66,7 +36,7 @@ extension MagicPlayMan {
                 Task {
                     // 只有在加载状态时才更新下载进度，避免与播放状态冲突
                     if case .loading = self.state {
-                        await self.setState(.loading(.downloading(progress)), reason: "\(reason).\(self.className).downloadProgress")
+                        self.setState(.loading(.downloading(progress)), reason: "\(reason).\(self.className).downloadProgress")
                     }
                 }
             }
@@ -87,12 +57,9 @@ extension MagicPlayMan {
             do {
                 try await url.download(verbose: self.verbose, reason: "MagicPlayMan requested")
             } catch {
-//                await MainActor.run {
-                    // 下载失败时清理监听器
-                    self.cleanupDownloadObservers()
-
-                    self.setState(.failed(.networkError(error.localizedDescription)), reason: "\(reason).\(self.className).downloadAndCache")
-//                }
+                // 下载失败时清理监听器
+                self.cleanupDownloadObservers()
+                self.setState(.failed(.networkError(error.localizedDescription)), reason: "\(reason).\(self.className).downloadAndCache")
             }
         }
     }

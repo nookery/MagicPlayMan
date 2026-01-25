@@ -87,9 +87,6 @@ public extension MagicPlayMan {
     /// 播放下一首
     /// 根据播放列表状态和导航订阅者决定播放行为
     func next() {
-        if self.verbose {
-            os_log("\(self.t)➡️ 下一首，当前是否有Asset -> \(self.hasAsset)")
-        }
         guard hasAsset else { return }
 
         if isPlaylistEnabled {
@@ -101,7 +98,7 @@ public extension MagicPlayMan {
                     os_log("\(self.t)➡️ 下一首，播放列表已启用且下一个是：\(nextAsset.title)")
                 }
                 Task {
-                    await loadFromURL(nextAsset, reason: self.className + ".next")
+                    await play(nextAsset, reason: self.className + ".next")
                 }
             } else {
                 if self.verbose {
@@ -139,6 +136,23 @@ public extension MagicPlayMan {
 
         _player.pause()
     }
+    
+    /// 开始播放当前加载的媒体资源，如果已播放完毕则从头开始播放
+    /// - Parameters:
+    ///   - reason: 原因
+    func playCurrent(reason: String) {
+        guard hasAsset else {
+            os_log(.error, "\(self.t)Cannot play: no asset loaded")
+            return
+        }
+
+        if currentTime == duration {
+            self.seek(time: 0, reason: self.className + ".playCurrent")
+        }
+
+        // 让内核开始播放，MagicPlayMan初始化时监听了内核状态
+        _player.play()
+    }
 
     /// 加载并播放一个 URL
     /// - Parameters:
@@ -151,6 +165,12 @@ public extension MagicPlayMan {
             os_log("\(self.t)📢 (\(reason)) Play: \(url.title), AutoPlay: \(autoPlay)")
         }
         self.setCurrentURL(url)
+        
+        // 检查文件是否存在
+        guard url.isFileExist else {
+            self.setState(.failed(.invalidAsset), reason: reason)
+            return
+        }
 
         // 检查 URL 是否有效
         guard url.isFileURL || url.isNetworkURL else {
@@ -168,8 +188,16 @@ public extension MagicPlayMan {
             return
         }
 
-        // 加载资源
-        await loadFromURL(url, autoPlay: autoPlay, reason: reason + ".play")
+        self.setState(.loading(.preparing), reason: reason + ".loadFromURL")
+
+        downloadAndCache(url, reason: reason)
+
+        let item = AVPlayerItem(url: url)
+        _player.replaceCurrentItem(with: item)
+        
+        if autoPlay {
+            self.playCurrent(reason: reason + ".play")
+        }
 
         if isPlaylistEnabled {
             append(url)
@@ -187,7 +215,7 @@ public extension MagicPlayMan {
                     os_log("\(self.t)上一首，播放列表已启用且上一个的是：\(previousAsset.title)")
                 }
                 Task {
-                    await loadFromURL(previousAsset, reason: self.className + ".previous")
+                    await play(previousAsset, reason: self.className + ".previous")
                 }
             }
         } else if events.hasNavigationSubscribers {
@@ -196,23 +224,6 @@ public extension MagicPlayMan {
                 events.onPreviousRequested.send(currentAsset)
             }
         }
-    }
-
-    /// 开始播放当前加载的媒体资源，如果已播放完毕则从头开始播放
-    /// - Parameters:
-    ///   - reason: 更新原因
-    func resume(reason: String) {
-        guard hasAsset else {
-            os_log(.error, "\(self.t)Cannot play: no asset loaded")
-            return
-        }
-
-        if currentTime == duration {
-            self.seek(time: 0, reason: self.className + ".play")
-        }
-
-        // 让内核开始播放，MagicPlayMan初始化时监听了内核状态
-        _player.play()
     }
 
     /// 从播放列表中移除指定索引的资源
@@ -338,7 +349,7 @@ public extension MagicPlayMan {
         case .playing:
             pause(reason: reason)
         case .paused, .stopped:
-            resume(reason: reason)
+            playCurrent(reason: reason)
         case .loading, .failed, .idle, .willPlay:
             // 在这些状态下不执行任何操作
             if verbose { os_log("\(self.t)Cannot toggle playback in current state: \(self.state.stateText)") }

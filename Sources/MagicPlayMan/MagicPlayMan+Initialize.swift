@@ -224,7 +224,7 @@ internal extension MagicPlayMan {
                             os_log("\(self.t)播放列表已启用，即将播放下一首：\(nextAsset.title)")
                         }
                         Task {
-                            await self.loadFromURL(nextAsset, reason: "播放列表已启用，即将播放下一首")
+                            await self.play(nextAsset, reason: "播放列表已启用，即将播放下一首")
                         }
                     } else {
                         if verbose {
