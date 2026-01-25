@@ -57,8 +57,7 @@ struct NextButtonView: View {
 // MARK: - Preview
 
 #Preview("MagicPlayMan") {
-    MagicPlayMan
-        .PreviewView()
+    MagicPlayMan.getPreviewView()
 }
 
 

@@ -83,6 +83,5 @@ extension MagicPlayMan {
 // MARK: - Preview
 
 #Preview("MagicPlayMan") {
-    MagicPlayMan
-        .PreviewView()
+    MagicPlayMan.getPreviewView()
 }

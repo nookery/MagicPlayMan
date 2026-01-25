@@ -136,7 +136,7 @@ public extension MagicPlayMan {
 
         _player.pause()
     }
-    
+
     /// 开始播放当前加载的媒体资源，如果已播放完毕则从头开始播放
     /// - Parameters:
     ///   - reason: 原因
@@ -164,12 +164,12 @@ public extension MagicPlayMan {
         if self.verbose {
             os_log("\(self.t)🚀 (\(reason)) Play: \(url.title), AutoPlay: \(autoPlay)")
         }
-        
+
         self.setCurrentURL(url)
-        
+
         // 立即暂停当前播放，避免显示新歌信息但还在放旧歌
         _player.pause()
-        
+
         // 检查文件是否存在
         guard url.isFileExist else {
             self.setState(.failed(.invalidAsset), reason: reason)
@@ -194,7 +194,7 @@ public extension MagicPlayMan {
 
         downloadAndCache(url, reason: reason) { [weak self] in
             guard let self = self else { return }
-            
+
             // 关键：确保当前仍是同一个 URL (用户可能在下载期间切歌了)
             guard self.currentURL == url else {
                 if self.verbose {
@@ -202,10 +202,10 @@ public extension MagicPlayMan {
                 }
                 return
             }
-            
+
             let item = AVPlayerItem(url: url)
             self._player.replaceCurrentItem(with: item)
-            
+
             if autoPlay {
                 self.playCurrent(reason: reason + ".play")
             }
@@ -371,6 +371,5 @@ public extension MagicPlayMan {
 }
 
 #Preview("MagicPlayMan") {
-    MagicPlayMan
-        .PreviewView()
+    MagicPlayMan.getPreviewView()
 }

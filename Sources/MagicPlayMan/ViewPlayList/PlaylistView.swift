@@ -6,7 +6,7 @@ public struct PlaylistView: View {
     let onSelect: (MagicAsset) -> Void
     let onRemove: (Int) -> Void
     let onMove: (Int, Int) -> Void
-    
+
     public init(
         playlist: [MagicAsset],
         currentIndex: Int,
@@ -20,7 +20,7 @@ public struct PlaylistView: View {
         self.onRemove = onRemove
         self.onMove = onMove
     }
-    
+
     public var body: some View {
         List {
             let items = Array(playlist.enumerated())
@@ -32,9 +32,9 @@ public struct PlaylistView: View {
                 )
                 .listRowBackground(
                     RoundedRectangle(cornerRadius: 8)
-                        .fill(index == currentIndex ? 
-                              Color.primary.opacity(0.1) : 
-                              Color.clear)
+                        .fill(index == currentIndex ?
+                            Color.primary.opacity(0.1) :
+                            Color.clear)
                 )
             }
             .onMove { from, to in
@@ -54,16 +54,16 @@ private struct PlaylistRow: View {
     let asset: MagicAsset
     let isPlaying: Bool
     let onSelect: () -> Void
-    
+
     @State private var isHovering = false
-    
+
     var body: some View {
         HStack {
             // 媒体类型图标
             Image(systemName: asset.url.isAudio ? "music.note" : "film")
                 .symbolEffect(.bounce, value: isPlaying)
                 .foregroundColor(isPlaying ? .accentColor : .secondary)
-            
+
             // 标题和艺术家
             VStack(alignment: .leading) {
                 Text(asset.metadata.title)
@@ -74,9 +74,9 @@ private struct PlaylistRow: View {
                         .foregroundColor(.secondary)
                 }
             }
-            
+
             Spacer()
-            
+
             // 时长
             Text(formatDuration(asset.metadata.duration))
                 .font(.caption)
@@ -97,7 +97,7 @@ private struct PlaylistRow: View {
             }
         }
     }
-    
+
     private func formatDuration(_ duration: TimeInterval) -> String {
         let minutes = Int(duration) / 60
         let seconds = Int(duration) % 60
@@ -123,10 +123,10 @@ private struct PlaylistRow: View {
                     artist: "Director 1",
                     duration: 300
                 )
-            )
+            ),
         ]
         @State private var currentIndex = 0
-        
+
         var body: some View {
             PlaylistView(
                 playlist: playlist,
@@ -138,6 +138,6 @@ private struct PlaylistRow: View {
             .frame(width: 300, height: 200)
         }
     }
-    
+
     return PreviewWrapper()
-} 
+}

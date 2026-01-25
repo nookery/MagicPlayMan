@@ -1,13 +1,12 @@
-import SwiftUI
 import AVKit
+import SwiftUI
 
-// MARK: - Video Player View
 struct VideoPlayerView: View {
     let player: AVPlayer
-    
+
     var body: some View {
         VideoPlayer(player: player)
-            .aspectRatio(16/9, contentMode: .fit)
+            .aspectRatio(16 / 9, contentMode: .fit)
             .clipShape(RoundedRectangle(cornerRadius: 12))
             .overlay(
                 RoundedRectangle(cornerRadius: 12)
@@ -17,7 +16,7 @@ struct VideoPlayerView: View {
 }
 
 // MARK: - Preview
-#Preview("MagicPlayMan") {
-    MagicPlayMan.PreviewView()
-}
 
+#Preview("MagicPlayMan") {
+    MagicPlayMan.getPreviewView()
+}

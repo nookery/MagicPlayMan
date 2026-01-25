@@ -1,6 +1,5 @@
 import SwiftUI
 
-
 struct LoadingOverlay: View {
     let state: PlaybackState.LoadingState
     let assetTitle: String
@@ -13,7 +12,7 @@ struct LoadingOverlay: View {
                 .fill(.ultraThinMaterial)
 
             switch state {
-            case .downloading(let progress):
+            case let .downloading(progress):
                 downloadingProgress(progress)
             case .buffering:
                 loadingIndicator(loc.buffering)
@@ -38,7 +37,7 @@ struct LoadingOverlay: View {
         }
         .padding()
     }
-    
+
     private func loadingIndicator(_ message: String) -> some View {
         VStack(spacing: 16) {
             ProgressView()
@@ -54,12 +53,12 @@ struct LoadingOverlay: View {
     VStack(spacing: 20) {
         LoadingOverlay(state: .connecting, assetTitle: "Test Song")
             .frame(height: 200)
-        
+
         LoadingOverlay(state: .downloading(0.45), assetTitle: "Test Song")
             .frame(height: 200)
-        
+
         LoadingOverlay(state: .buffering, assetTitle: "Test Song")
             .frame(height: 200)
     }
     .padding()
-} 
+}

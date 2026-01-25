@@ -41,7 +41,6 @@ struct MagicPlayProgressView: View, SuperLog {
 // MARK: - Preview
 
 #Preview("MagicPlayMan") {
-    MagicPlayMan
-        .PreviewView()
+    MagicPlayMan.getPreviewView()
         
 }

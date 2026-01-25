@@ -26,6 +26,13 @@ public extension MagicPlayMan {
         )
     }
 
+    /// 获取预览视图
+    /// - Parameter cacheDirectory: 自定义缓存目录，如果为 nil 则使用默认缓存目录
+    /// - Returns: 预览视图实例
+    static func getPreviewView(cacheDirectory: URL? = nil) -> some View {
+        MagicPlayManPreviewView(cacheDirectory: cacheDirectory)
+    }
+
     /// 创建播放状态视图
     /// - Returns: 返回一个显示播放器当前状态的视图，包括：
     /// - 播放/暂停状态
@@ -128,6 +135,5 @@ public extension MagicPlayMan {
 // MARK: - Preview
 
 #Preview("MagicPlayMan") {
-    MagicPlayMan
-        .PreviewView()
+    MagicPlayMan.getPreviewView()
 }

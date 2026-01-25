@@ -1,5 +1,5 @@
-import SwiftUI
 import MagicKit
+import SwiftUI
 
 public extension MagicPlayMan {
     /// 订阅者列表视图
@@ -53,4 +53,4 @@ public extension MagicPlayMan {
             .padding(.vertical, 4)
         }
     }
-} 
+}

@@ -127,4 +127,3 @@ struct AudioContentView: View, SuperLog {
 #Preview("AudioContentView Showcase") {
     AudioContentViewShowcase()
 }
-

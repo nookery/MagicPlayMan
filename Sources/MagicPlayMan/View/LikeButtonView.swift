@@ -78,5 +78,5 @@ struct LikeButtonView: View {
 
 #Preview("MagicPlayMan") {
     MagicPlayMan
-        .PreviewView()
+        .getPreviewView()
 }

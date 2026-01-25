@@ -4,8 +4,6 @@ import OSLog
 import SwiftUI
 
 public extension MagicPlayMan {
-    // MARK: - Playback Mode Management
-
     /// 切换到下一个播放模式
     ///
     /// 播放模式按以下顺序循环切换：
@@ -31,6 +29,6 @@ public extension MagicPlayMan {
 // MARK: - Preview
 
 #Preview("MagicPlayMan - Large") {
-    MagicPlayMan.PreviewView()
+    MagicPlayMan.getPreviewView()
         .frame(height: 1000)
 }

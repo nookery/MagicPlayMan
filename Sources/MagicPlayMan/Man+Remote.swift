@@ -7,14 +7,9 @@ import SwiftUI
 
 #if os(macOS)
     import AppKit
-#else
-    import UIKit
-#endif
-
-// 平台相关的类型别名
-#if os(macOS)
     typealias PlatformImage = NSImage
 #else
+    import UIKit
     typealias PlatformImage = UIImage
 #endif
 
@@ -166,7 +161,7 @@ extension MagicPlayMan {
                 if self.verbose {
                     os_log("\(self.t)Remote command: Toggle like")
                 }
-                
+
                 self.toggleLike()
                 return .success
             }
@@ -262,5 +257,5 @@ extension MagicPlayMan {
 // MARK: - Preview
 
 #Preview("MagicPlayMan") {
-    MagicPlayMan.PreviewView()
+    MagicPlayMan.getPreviewView()
 }

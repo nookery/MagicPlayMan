@@ -43,7 +43,7 @@ struct ForwardButtonView: View {
 
 #Preview("MagicPlayMan") {
     MagicPlayMan
-        .PreviewView()
+        .getPreviewView()
 }
 
 

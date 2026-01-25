@@ -41,8 +41,7 @@ struct PlayModeButtonView: View {
 // MARK: - Preview
 
 #Preview("MagicPlayMan") {
-    MagicPlayMan
-        .PreviewView()
+    MagicPlayMan.getPreviewView()
         
 }
 
