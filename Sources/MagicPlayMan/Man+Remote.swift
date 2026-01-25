@@ -79,13 +79,7 @@ extension MagicPlayMan {
             if self.verbose {
                 os_log("\(self.t)Remote command: Previous track")
             }
-            if self.isPlaylistEnabled {
-                self.previous()
-            } else {
-                if let asset = self.currentAsset {
-                    self.events.onPreviousRequested.send(asset)
-                }
-            }
+            self.previous()
             return .success
         }
 
@@ -97,13 +91,7 @@ extension MagicPlayMan {
             if self.verbose {
                 os_log("\(self.t)Remote command: Next track")
             }
-            if self.isPlaylistEnabled {
-                self.next()
-            } else {
-                if let asset = self.currentAsset {
-                    self.events.onNextRequested.send(asset)
-                }
-            }
+            self.next()
             return .success
         }
 

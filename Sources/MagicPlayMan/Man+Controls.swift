@@ -5,16 +5,6 @@ import OSLog
 import SwiftUI
 
 public extension MagicPlayMan {
-    /// 添加资源到播放列表
-    /// - Parameter asset: 要添加到播放列表的媒体资源URL
-    func append(_ asset: URL) {
-        guard isPlaylistEnabled else {
-            if verbose { os_log("\(self.t)Cannot append: playlist is disabled") }
-            return
-        }
-        playlist.append(asset)
-    }
-
     /// 设置播放模式
     /// - Parameter mode: 要设置的播放模式
     func changePlayMode(_ mode: MagicPlayMode) {
@@ -35,91 +25,23 @@ public extension MagicPlayMan {
         }
     }
 
-    /// 清空播放列表
-    /// 移除播放列表中的所有媒体资源
-    func clearPlaylist() {
-        guard isPlaylistEnabled else {
-            if verbose { os_log("\(self.t)Cannot clear: playlist is disabled") }
-            return
-        }
-        playlist.clear()
-    }
-
-    /// 禁用播放列表功能
-    /// 禁用播放列表后，保留当前播放的资源（如果有），清除其他资源
-    func disablePlaylist() async {
-        guard isPlaylistEnabled else { return }
-
-        await setPlaylistEnabled(false)
-        os_log("\(self.t)Playlist disabled")
-
-        // 如果禁用播放列表，保留当前播放的资源
-        if let currentAsset = currentURL {
-            await setItems([currentAsset])
-            await setCurrentIndex(0)
-        } else {
-            await setItems([])
-            await setCurrentIndex(-1)
-        }
-    }
-
-    /// 启用播放列表功能
-    /// 启用后可以添加多个媒体资源并进行列表播放
-    func enablePlaylist() async {
-        guard !isPlaylistEnabled else { return }
-
-        await setPlaylistEnabled(true)
-        os_log("\(self.t)Playlist enabled")
-    }
-
-    /// 移动播放列表中的资源
-    /// - Parameters:
-    ///   - from: 源位置索引
-    ///   - to: 目标位置索引
-    func moveInPlaylist(from: Int, to: Int) {
-        guard isPlaylistEnabled else {
-            if verbose { os_log("\(self.t)Cannot move: playlist is disabled") }
-            return
-        }
-        playlist.move(from: from, to: to)
-    }
-
     /// 播放下一首
-    /// 根据播放列表状态和导航订阅者决定播放行为
+    /// 根据导航订阅者决定播放行为
     func next() {
         guard hasAsset else { return }
 
-        if isPlaylistEnabled {
+        if events.hasNavigationSubscribers {
             if self.verbose {
-                os_log("\(self.t)➡️ 下一首，播放列表已启用")
-            }
-            if let nextAsset = _playlist.playNext(mode: playMode) {
-                if self.verbose {
-                    os_log("\(self.t)➡️ 下一首，播放列表已启用且下一个是：\(nextAsset.title)")
-                }
-                Task {
-                    await play(nextAsset, reason: self.className + ".next")
-                }
-            } else {
-                if self.verbose {
-                    os_log("\(self.t)➡️ 下一首，播放列表已启用但没有 NextAsset")
-                }
-            }
-        } else if events.hasNavigationSubscribers {
-            if self.verbose {
-                os_log("\(self.t)➡️ 下一首，播放列表已禁用且有 NavigationSubscribers")
+                os_log("\(self.t)➡️ 请求下一首")
             }
 
-            // 如果播放列表被禁用但有订阅者，发送请求下一首事件
-            if let currentAsset = currentAsset {
-                if self.verbose {
-                    os_log("\(self.t)➡️ 请求下一首")
-                }
+            // 如果有订阅者，发送请求下一首事件
+            if let currentAsset = currentURL {
                 events.onNextRequested.send(currentAsset)
             }
         } else {
             if self.verbose {
-                os_log("\(self.t)➡️ 下一首，播放列表已禁用且无 NavigationSubscribers")
+                os_log("\(self.t)➡️ 无 NavigationSubscribers")
             }
         }
     }
@@ -210,42 +132,19 @@ public extension MagicPlayMan {
                 self.playCurrent(reason: reason + ".play")
             }
         }
-
-        if isPlaylistEnabled {
-            append(url)
-        }
     }
 
     /// 播放上一首
-    /// 根据播放列表状态和导航订阅者决定播放行为
+    /// 根据导航订阅者决定播放行为
     func previous() {
         guard hasAsset else { return }
 
-        if isPlaylistEnabled {
-            if let previousAsset = _playlist.playPrevious(mode: playMode) {
-                if self.verbose {
-                    os_log("\(self.t)上一首，播放列表已启用且上一个的是：\(previousAsset.title)")
-                }
-                Task {
-                    await play(previousAsset, reason: self.className + ".previous")
-                }
-            }
-        } else if events.hasNavigationSubscribers {
-            // 如果播放列表被禁用但有订阅者，发送请求上一首事件
+        if events.hasNavigationSubscribers {
+            // 如果有订阅者，发送请求上一首事件
             if let currentAsset = currentURL {
                 events.onPreviousRequested.send(currentAsset)
             }
         }
-    }
-
-    /// 从播放列表中移除指定索引的资源
-    /// - Parameter index: 要移除的资源在播放列表中的索引位置
-    func removeFromPlaylist(at index: Int) {
-        guard isPlaylistEnabled else {
-            if verbose { os_log("\(self.t)Cannot remove: playlist is disabled") }
-            return
-        }
-        playlist.remove(at: index)
     }
 
     /// 跳转到指定时间

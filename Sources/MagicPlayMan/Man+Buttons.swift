@@ -146,38 +146,6 @@ public extension MagicPlayMan {
         }
     }
 
-    /// 自观察版本：播放列表按钮视图
-    /// 
-    /// 这是一个自观察的按钮视图，会自动监听播放列表状态变化。
-    /// 提供播放列表查看功能，通过弹窗展示当前播放列表内容。
-    /// 
-    /// - Parameter size: 按钮尺寸，默认为 .regular
-    /// - Returns: 自观察的播放列表按钮视图
-    @MainActor
-    @ViewBuilder
-    func makePlaylistButtonView(size: MagicButton.Size = .regular) -> some View {
-        PlaylistButtonView(man: self, size: size)
-    }
-
-    /// 自观察版本：播放列表开关按钮视图
-    /// 
-    /// 这是一个自观察的按钮视图，会自动监听播放列表启用状态变化。
-    /// 提供播放列表功能的开启/关闭切换，根据状态显示不同的图标和样式。
-    /// 
-    /// - Parameter size: 按钮尺寸，默认为 .regular
-    /// - Returns: 自观察的播放列表开关按钮视图
-    @MainActor
-    @ViewBuilder
-    func makePlaylistToggleButtonView(size: MagicButton.Size = .regular) -> some View {
-        PlaylistToggleButtonView(man: self, size: size)
-    }
-
-    /// 获取播放列表切换按钮的动态 ID
-    /// 用于在 SwiftUI View 中通过 .id() 修饰符响应播放列表状态变化
-    var playlistToggleButtonId: String {
-        return "playlist-toggle-button-\(isPlaylistEnabled ? "enabled" : "disabled")"
-    }
-
     /// 自观察版本：订阅者按钮视图
     /// 
     /// 这是一个自观察的按钮视图，会自动监听订阅者状态变化。
@@ -233,8 +201,6 @@ public extension MagicPlayMan {
         HStack(spacing: 16) {
             man.makePlayModeButtonView()
             man.makeLikeButtonView()
-            man.makePlaylistButtonView()
-            man.makePlaylistToggleButtonView()
         }
 
         // 工具按钮组

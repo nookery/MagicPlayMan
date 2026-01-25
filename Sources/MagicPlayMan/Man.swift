@@ -8,7 +8,7 @@ import OSLog
 import SwiftUI
 
 /// 媒体播放管理器
-/// 提供音频和视频播放功能，支持播放列表、播放模式切换、喜欢状态管理等
+/// 提供音频和视频播放功能，支持播放模式切换、喜欢状态管理等
 public class MagicPlayMan: ObservableObject, SuperLog {
     /// 日志标识符
     public nonisolated static let emoji = "🎧"
@@ -24,9 +24,6 @@ public class MagicPlayMan: ObservableObject, SuperLog {
 
     /// 当前播放信息字典，用于系统媒体控制中心
     internal var nowPlayingInfo: [String: Any] = [:]
-
-    /// 播放列表管理器
-    internal let _playlist = Playlist()
 
     /// 资源缓存管理器
     internal var cache: AssetCache?
@@ -58,9 +55,6 @@ public class MagicPlayMan: ObservableObject, SuperLog {
     /// 喜欢按钮缓存，避免重复创建
     private var _cachedLikeButton: MagicButton?
 
-    /// 播放列表切换按钮缓存，避免重复创建
-    private var _cachedPlaylistToggleButton: MagicButton?
-
     /// 本地化配置
     public var localization: Localization!
 
@@ -69,12 +63,6 @@ public class MagicPlayMan: ObservableObject, SuperLog {
 
     /// 默认封面图构建器，支持自定义视图作为默认封面
     public var defaultArtworkBuilder: (() -> any View)?
-
-    /// 播放列表中的资源 URL 数组
-    @Published public private(set) var items: [URL] = []
-
-    /// 当前播放的资源索引
-    @Published public private(set) var currentIndex: Int = -1
 
     /// 当前播放模式（顺序、随机、单曲循环等）
     @Published public private(set) var playMode: MagicPlayMode = .sequence
@@ -94,9 +82,6 @@ public class MagicPlayMan: ObservableObject, SuperLog {
     /// 播放进度（0-1）
     @Published public private(set) var progress: Double = 0
 
-    /// 是否启用播放列表功能
-    @Published public private(set) var isPlaylistEnabled: Bool = true
-
     /// 已喜欢的资源 URL 集合
     @Published public private(set) var likedAssets: Set<URL> = []
 }
@@ -104,20 +89,6 @@ public class MagicPlayMan: ObservableObject, SuperLog {
 // MARK: - Setter
 
 extension MagicPlayMan {
-    /// 设置播放列表中的资源 URL 数组
-    /// - Parameter items: 资源 URL 数组
-    @MainActor
-    func setItems(_ items: [URL]) {
-        self.items = items
-    }
-
-    /// 设置当前播放的资源索引
-    /// - Parameter index: 资源索引
-    @MainActor
-    func setCurrentIndex(_ index: Int) {
-        currentIndex = index
-    }
-
     /// 设置当前播放时间
     /// - Parameter
     ///   - time: 播放时间（秒）
@@ -156,16 +127,6 @@ extension MagicPlayMan {
     @MainActor
     func setProgress(_ value: Double) {
         progress = value
-    }
-
-    /// 设置播放列表功能是否启用
-    /// - Parameter value: 是否启用
-    @MainActor
-    func setPlaylistEnabled(_ value: Bool) {
-        isPlaylistEnabled = value
-
-        // 清理播放列表切换按钮缓存
-        setCachedPlaylistToggleButton(nil)
     }
 
     /// 设置已喜欢的资源集合
@@ -271,20 +232,12 @@ extension MagicPlayMan {
         _cachedLikeButton = button
     }
 
-    /// 设置播放列表切换按钮缓存
-    /// - Parameter button: 按钮实例
-    @MainActor
-    func setCachedPlaylistToggleButton(_ button: MagicButton?) {
-        _cachedPlaylistToggleButton = button
-    }
-
     /// 清理所有按钮缓存
     @MainActor
     func clearButtonCache() {
         setCachedPlayPauseButton(nil)
         setCachedPlayModeButton(nil)
         setCachedLikeButton(nil)
-        setCachedPlaylistToggleButton(nil)
     }
 
     /// 获取播放/暂停按钮缓存
@@ -300,11 +253,6 @@ extension MagicPlayMan {
     /// 获取喜欢按钮缓存
     var cachedLikeButton: MagicButton? {
         _cachedLikeButton
-    }
-
-    /// 获取播放列表切换按钮缓存
-    var cachedPlaylistToggleButton: MagicButton? {
-        _cachedPlaylistToggleButton
     }
 }
 

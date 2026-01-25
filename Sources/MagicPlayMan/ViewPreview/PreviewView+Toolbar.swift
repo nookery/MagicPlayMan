@@ -25,8 +25,6 @@ extension MagicPlayManPreviewView {
         HStack {
             playMan.makePlayPauseButtonView()
             playMan.makePlayModeButtonView()
-            playMan.makePlaylistButtonView()
-            playMan.makePlaylistToggleButtonView()
             playMan.makeSubscribersButtonView()
             playMan.makeLikeButtonView()
         }

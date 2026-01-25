@@ -1,4 +1,5 @@
 import AVFoundation
+import SwiftUI
 import Foundation
 import MagicKit
 
@@ -48,7 +49,6 @@ public extension MagicPlayMan {
     var player: AVPlayer { _player }
     var playing: Bool { self.state == .playing }
     var hasAsset: Bool { self.currentURL != nil }
-    var playlist: Playlist { _playlist }
     var currentAsset: URL? { currentURL }
     var asset: URL? { currentURL }
     var isLoading: Bool { if case .loading = self.state { return true } else { return false } }
@@ -73,4 +73,11 @@ public extension MagicPlayMan {
     var supportedFormats: [SupportedFormat] {
         SupportedFormat.allFormats
     }
+}
+
+// MARK: - Preview
+
+#Preview("MagicPlayMan") {
+    MagicPlayMan.getPreviewView()
+        .frame(height: 600)
 }

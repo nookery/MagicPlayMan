@@ -10,7 +10,6 @@ public struct MagicPlayManPreviewView: View {
 
     @StateObject var playMan: MagicPlayMan
     @State var selectedSampleName: String?
-    @State var showPlaylist = false
     @State var toast: (message: String, icon: String, style: MagicToast.Style)?
 
     // MARK: - Initialization
@@ -82,7 +81,6 @@ public struct MagicPlayManPreviewView: View {
                     }
                 }
         }
-        .animation(.spring(response: 0.3, dampingFraction: 0.8), value: showPlaylist)
         .onAppear {
             setupEventObservation()
         }

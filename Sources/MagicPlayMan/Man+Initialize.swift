@@ -17,7 +17,6 @@ public extension MagicPlayMan {
     ///   - defaultArtworkBuilder: 默认封面图构建器，支持自定义视图作为默认封面
     convenience init(
         cacheDirectory: URL? = nil,
-        playlistEnabled: Bool = true,
         verbose: Bool = false,
         locale: Locale = Locale(identifier: "zh_CN"),
         defaultArtwork: Image? = nil,
@@ -61,32 +60,6 @@ public extension MagicPlayMan {
         setupPlayer()
         setupObservers()
         setupRemoteControl()
-
-        // 设置播放列表状态
-        Task {
-            await self.setPlaylistEnabled(playlistEnabled)
-        }
-
-        // 修改监听方式
-        _playlist.$items
-            .receive(on: DispatchQueue.main)
-            .sink { [weak self] items in
-                guard let self = self else { return }
-                Task { @MainActor in
-                    self.setItems(items)
-                }
-            }
-            .store(in: &cancellables)
-
-        _playlist.$currentIndex
-            .receive(on: DispatchQueue.main)
-            .sink { [weak self] index in
-                guard let self = self else { return }
-                Task { @MainActor in
-                    self.setCurrentIndex(index)
-                }
-            }
-            .store(in: &cancellables)
     }
 }
 
@@ -214,31 +187,14 @@ internal extension MagicPlayMan {
                         return
                     }
 
-                    if !self.isPlaylistEnabled {
-                        // 如果播放列表被禁用，通知调用者播放完成
-                        if verbose {
-                            os_log("\(self.t)🌹 播放列表已禁用，等待订阅者处理下一首")
-                        }
-                        Task { @MainActor in
-                            self.setState(.stopped, reason: "playbackFinished")
-                        }
-                        self.events.onNextRequested.send(currentAsset)
-                    } else if let nextAsset = self._playlist.playNext(mode: self.playMode) {
-                        // 如果播放列表启用，播放下一首
-                        if verbose {
-                            os_log("\(self.t)播放列表已启用，即将播放下一首：\(nextAsset.title)")
-                        }
-                        Task {
-                            await self.play(nextAsset, reason: "播放列表已启用，即将播放下一首")
-                        }
-                    } else {
-                        if verbose {
-                            os_log("\(self.t)播放列表已到末尾")
-                        }
-                        Task { @MainActor in
-                            self.setState(.stopped, reason: self.className + ".systemObserver.playlistFinished")
-                        }
+                    // 播放完成后，通知订阅者
+                    if verbose {
+                        os_log("\(self.t)🌹 播放完成，等待订阅者处理下一首")
                     }
+                    Task { @MainActor in
+                        self.setState(.stopped, reason: "playbackFinished")
+                    }
+                    self.events.onNextRequested.send(currentAsset)
                 }
             }
             .store(in: &cancellables)

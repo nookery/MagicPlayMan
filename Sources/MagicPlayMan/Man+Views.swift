@@ -41,20 +41,6 @@ public extension MagicPlayMan {
         state.makeStateView(assetTitle: currentAsset?.title, localization: localization)
     }
 
-    /// 创建播放列表视图
-    /// - Returns: 返回一个播放列表视图，根据列表状态自动适配：
-    /// - 当列表为空时，显示空列表提示视图
-    /// - 当列表有内容时，显示播放列表内容视图
-    func makePlaylistView() -> some View {
-        Group {
-            if items.isEmpty {
-                EmptyPlaylistView()
-            } else {
-                PlaylistContentView(playMan: self)
-            }
-        }
-    }
-
     /// 创建媒体资源视图
     /// - Returns: 返回一个根据当前媒体资源类型自动适配的视图：
     /// - 当没有加载资源时，返回空视图

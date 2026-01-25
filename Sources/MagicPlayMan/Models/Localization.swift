@@ -62,21 +62,6 @@ public struct Localization {
         }
     }
 
-    // MARK: - Playlist
-    public var noItemsInPlaylist: String {
-        switch locale.language.languageCode?.identifier {
-        case "zh": return "播放列表为空"
-        default: return "No Items in Playlist"
-        }
-    }
-
-    public var addSomeMediaFiles: String {
-        switch locale.language.languageCode?.identifier {
-        case "zh": return "添加一些媒体文件开始使用"
-        default: return "Add some media files to get started"
-        }
-    }
-
     // MARK: - Thumbnail
     public var noArtwork: String {
         switch locale.language.languageCode?.identifier {
@@ -368,20 +353,6 @@ public struct Localization {
 
     // MARK: - Button Disabled Reasons
 
-    public var playlistDisabledNoPreviousHandler: String {
-        switch locale.language.languageCode?.identifier {
-        case "zh": return "播放列表已禁用且没有上一曲处理器"
-        default: return "Playlist is disabled and no handler for previous track"
-        }
-    }
-
-    public var playlistDisabledNoNextHandler: String {
-        switch locale.language.languageCode?.identifier {
-        case "zh": return "播放列表已禁用且没有下一曲处理器"
-        default: return "Playlist is disabled and no handler for next track"
-        }
-    }
-
     public var firstTrack: String {
         switch locale.language.languageCode?.identifier {
         case "zh": return "这是第一首曲目"
@@ -423,15 +394,6 @@ public struct Localization {
         switch locale.language.languageCode?.identifier {
         case "zh": return "全部循环"
         default: return "Repeat All"
-        }
-    }
-
-    // MARK: - Playlist
-
-    public var playlistDisabled: String {
-        switch locale.language.languageCode?.identifier {
-        case "zh": return "播放列表已禁用\n启用播放列表以查看和管理曲目"
-        default: return "Playlist is disabled\nEnable playlist to view and manage tracks"
         }
     }
 
