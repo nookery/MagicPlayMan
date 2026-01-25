@@ -124,7 +124,7 @@ extension MagicPlayMan {
     ///   - reason: 状态变更原因（用于日志记录）
     @MainActor
     func setCurrentTime(_ time: TimeInterval, reason: String) {
-        if verbose {
+        if verbose && false {
             os_log("\(self.t)🕒 (\(reason)) 设置当前播放时间：\(time)s")
         }
         

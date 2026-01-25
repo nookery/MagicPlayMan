@@ -140,9 +140,14 @@ internal extension MagicPlayMan {
                         // 播放状态变化时更新 Now Playing Info
                         self.updateNowPlayingInfo(includeThumbnail: true, reason: self.className + ".systemObserver.playing")
                     case .paused:
-                        self.setState(self.currentTime == 0 ? .stopped : .paused, reason: self.className + ".systemObserver.paused")
-                        // 播放状态变化时更新 Now Playing Info
                         self.updateNowPlayingInfo(includeThumbnail: false, reason: self.className + ".systemObserver.paused")
+                        
+                        // 如果是下载状态，无需更新状态
+                        if self.state.isDownloading {
+                            return
+                        }
+                        
+                        self.setState(self.currentTime == 0 ? .stopped : .paused, reason: self.className + ".systemObserver.paused")
                     case .waitingToPlayAtSpecifiedRate:
                         if case .playing = self.state {
                             self.setState(.loading(.buffering), reason: self.className + ".systemObserver.waitingToPlayAtSpecifiedRate")
