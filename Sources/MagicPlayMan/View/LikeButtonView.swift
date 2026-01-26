@@ -1,5 +1,4 @@
 import MagicKit
-import MagicUI
 import SwiftUI
 
 /// 喜欢按钮视图
@@ -10,67 +9,43 @@ import SwiftUI
 /// ## 特性
 /// - 自动响应喜欢状态变化
 /// - 动态图标和样式切换（实心/空心爱心）
-/// - 支持自定义按钮尺寸、样式、形状等属性
+/// - 支持自定义按钮尺寸
 /// - 智能禁用状态管理
 /// - 异步操作处理
-/// - 自动分配唯一标识符
 ///
 /// ## 使用示例
 /// ```swift
 /// // 基础用法
-/// LikeButtonView(man: playMan, size: .large)
-///
-/// // 自定义样式
-/// LikeButtonView(man: playMan, size: .large, style: .success, shape: .circle)
-///
-/// // 悬停时显示形状
-/// LikeButtonView(man: playMan, shapeVisibility: .onHover)
+/// LikeButtonView(man: playMan, size: 28)
 /// ```
 ///
 /// - Parameters:
 ///   - man: MagicPlayMan 实例，用于监听喜欢状态和触发喜欢操作
-///   - size: 按钮尺寸，默认为 .regular
-///   - style: 按钮样式，默认为 nil（使用默认样式：喜欢时为 .primary，不喜欢时为 .secondary）
-///   - shape: 按钮形状，默认为 .roundedSquare
-///   - shapeVisibility: 形状显示时机，默认为 .always
+///   - size: 按钮尺寸，默认为 28
 struct LikeButtonView: View {
     @ObservedObject var man: MagicPlayMan
-    let size: MagicButton.Size
-    let style: MagicButton.Style?
-    let shape: MagicButton.Shape
-    let shapeVisibility: MagicButton.ShapeVisibility
+    let size: CGFloat
 
     /// 初始化方法
     init(
         man: MagicPlayMan,
-        size: MagicButton.Size = .regular,
-        style: MagicButton.Style? = nil,
-        shape: MagicButton.Shape = .roundedSquare,
-        shapeVisibility: MagicButton.ShapeVisibility = .always
+        size: CGFloat = 28
     ) {
         self.man = man
         self.size = size
-        self.style = style
-        self.shape = shape
-        self.shapeVisibility = shapeVisibility
     }
 
     @Environment(\.localization) private var loc
 
     var body: some View {
-        MagicButton(
-            icon: man.isCurrentAssetLiked ? "heart.fill" : "heart",
-            style: style ?? (man.isCurrentAssetLiked ? .primary : .secondary),
-            size: size,
-            shape: shape,
-            shapeVisibility: shapeVisibility,
-            disabledReason: !man.hasAsset ? loc.noMediaLoaded : nil,
-            action: { completion in
-                man.toggleLike()
-                completion()
-            }
-        )
-        .magicId(man.likeButtonId)
+        Button(action: { man.toggleLike() }) {
+            Image(systemName: man.isCurrentAssetLiked ? "heart.fill" : "heart")
+                .symbolVariant(man.isCurrentAssetLiked ? .fill : .none)
+                .foregroundStyle(man.isCurrentAssetLiked ? .red : .primary)
+                .frame(width: size, height: size)
+        }
+        .disabled(!man.hasAsset)
+        .buttonStyle(.borderless)
     }
 }
 

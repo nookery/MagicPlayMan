@@ -1,5 +1,4 @@
 import MagicKit
-import MagicUI
 import SwiftUI
 
 /// 上一曲按钮视图
@@ -11,19 +10,18 @@ import SwiftUI
 /// - 自动响应状态变化
 /// - 智能禁用状态管理（无媒体、无导航订阅者等）
 /// - 支持自定义按钮尺寸
-/// - 使用 MagicButton 的次要样式
 ///
 /// ## 使用示例
 /// ```swift
-/// PreviousButtonView(man: playMan, size: .large)
+/// PreviousButtonView(man: playMan, size: 28)
 /// ```
 ///
 /// - Parameters:
 ///   - man: MagicPlayMan 实例，用于监听状态和触发上一曲操作
-///   - size: 按钮尺寸，默认为 .regular
+///   - size: 按钮尺寸，默认为 28
 struct PreviousButtonView: View {
     @ObservedObject var man: MagicPlayMan
-    let size: MagicButton.Size
+    let size: CGFloat
 
     @Environment(\.localization) private var loc
 
@@ -42,14 +40,12 @@ struct PreviousButtonView: View {
     }
 
     var body: some View {
-        MagicButton.simple(
-            icon: .iconBackwardEndFill,
-            style: .secondary,
-            size: size,
-            shape: .circle,
-            disabledReason: disabledReason,
-            action: man.previous
-        )
+        Button(action: man.previous) {
+            Image(systemName: .iconBackwardEndFill)
+                .frame(width: size, height: size)
+        }
+        .disabled(disabledReason != nil)
+        .buttonStyle(.borderless)
     }
 }
 

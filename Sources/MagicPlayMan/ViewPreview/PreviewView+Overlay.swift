@@ -41,13 +41,16 @@ extension MagicPlayManPreviewView {
                     .foregroundStyle(.secondary)
                     .multilineTextAlignment(.center)
 
-                MagicButton.simple(
-                    icon: "arrow.clockwise",
-                    title: playMan.localization.tryAgain,
-                    style: .primary,
-                    shape: .capsule,
-                    action: onRetry
-                )
+                Button(action: onRetry) {
+                    HStack(spacing: 8) {
+                        Image(systemName: "arrow.clockwise")
+                        Text(playMan.localization.tryAgain)
+                    }
+                    .padding(.horizontal, 16)
+                    .padding(.vertical, 8)
+                    .background(.blue, in: Capsule())
+                    .foregroundStyle(.white)
+                }
             }
             .padding()
         }

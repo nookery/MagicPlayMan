@@ -1,5 +1,4 @@
 import MagicKit
-import MagicUI
 import SwiftUI
 
 /// 播放/暂停按钮视图
@@ -11,20 +10,19 @@ import SwiftUI
 /// - 自动响应播放状态变化
 /// - 智能禁用状态管理
 /// - 支持自定义按钮尺寸
-/// - 使用 MagicButton 的简单样式
 ///
 /// ## 使用示例
 /// ```swift
-/// PlayPauseButtonView(man: playMan, size: .large)
+/// PlayPauseButtonView(man: playMan, size: 28)
 /// ```
 ///
 /// - Parameters:
 ///   - man: MagicPlayMan 实例，用于监听播放状态和触发播放控制
-///   - size: 按钮尺寸，默认为 .regular
+///   - size: 按钮尺寸，默认为 28
 struct PlayPauseButtonView: View, SuperLog {
     // 精简订阅：只订阅按钮所需的状态，避免不相关变化触发刷新
     @ObservedObject var man: MagicPlayMan
-    let size: MagicButton.Size
+    let size: CGFloat
     @Environment(\.localization) private var loc
 
     private var disabledReason: String? {
@@ -35,17 +33,14 @@ struct PlayPauseButtonView: View, SuperLog {
     }
 
     var body: some View {
-        MagicButton.simple(
-            icon: man.state == .playing ? .iconPauseFill : .iconPlayFill,
-            style: .primary,
-            size: size,
-            shape: .circle,
-            disabledReason: disabledReason,
-            action: {
-                man.toggle(reason: self.className)
-            }
-        )
-        .magicId(man.playPauseButtonId)
+        Button(action: {
+            man.toggle(reason: self.className)
+        }) {
+            Image(systemName: man.state == .playing ? .iconPauseFill : .iconPlayFill)
+                .frame(width: size, height: size)
+        }
+        .disabled(disabledReason != nil)
+        .buttonStyle(.borderless)
     }
 }
 
