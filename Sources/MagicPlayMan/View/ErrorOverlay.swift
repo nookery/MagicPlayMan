@@ -1,5 +1,4 @@
 import MagicKit
-import MagicUI
 import SwiftUI
 
 struct ErrorOverlay: View {
@@ -27,12 +26,15 @@ struct ErrorOverlay: View {
                     .foregroundStyle(.secondary)
                     .multilineTextAlignment(.center)
 
-                MagicButton.simple(
-                    icon: "arrow.clockwise",
-                    title: loc.tryAgain,
-                    shape: .capsule,
-                    action: onRetry
-                )
+                Button(action: onRetry) {
+                    HStack(spacing: 8) {
+                        Image(systemName: "arrow.clockwise")
+                        Text(loc.tryAgain)
+                    }
+                    .padding(.horizontal, 16)
+                    .padding(.vertical, 8)
+                }
+                .buttonStyle(.bordered)
             }
             .padding()
         }

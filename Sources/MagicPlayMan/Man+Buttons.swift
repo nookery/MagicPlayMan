@@ -1,7 +1,6 @@
 import MagicKit
 import OSLog
 import SwiftUI
-import MagicUI
 
 public extension MagicPlayMan {
     /// 自观察版本：播放/暂停按钮视图（推荐外部调用，零负担自动刷新）
@@ -13,7 +12,7 @@ public extension MagicPlayMan {
     /// - Returns: 自观察的播放/暂停按钮视图
     @MainActor
     @ViewBuilder
-    func makePlayPauseButtonView(size: MagicButton.Size = .regular) -> some View {
+    func makePlayPauseButtonView(size: CGFloat = 28) -> some View {
         PlayPauseButtonView(man: self, size: size)
     }
 
@@ -44,7 +43,7 @@ public extension MagicPlayMan {
     /// - Returns: 自观察的上一曲按钮视图
     @MainActor
     @ViewBuilder
-    func makePreviousButtonView(size: MagicButton.Size = .regular) -> some View {
+    func makePreviousButtonView(size: CGFloat = 28) -> some View {
         PreviousButtonView(man: self, size: size)
     }
 
@@ -57,7 +56,7 @@ public extension MagicPlayMan {
     /// - Returns: 自观察的下一曲按钮视图
     @MainActor
     @ViewBuilder
-    func makeNextButtonView(size: MagicButton.Size = .regular) -> some View {
+    func makeNextButtonView(size: CGFloat = 28) -> some View {
         NextButtonView(man: self, size: size)
     }
 
@@ -70,7 +69,7 @@ public extension MagicPlayMan {
     /// - Returns: 自观察的快退按钮视图
     @MainActor
     @ViewBuilder
-    func makeRewindButtonView(size: MagicButton.Size = .regular) -> some View {
+    func makeRewindButtonView(size: CGFloat = 28) -> some View {
         RewindButtonView(man: self, size: size)
     }
 
@@ -83,7 +82,7 @@ public extension MagicPlayMan {
     /// - Returns: 自观察的快进按钮视图
     @MainActor
     @ViewBuilder
-    func makeForwardButtonView(size: MagicButton.Size = .regular) -> some View {
+    func makeForwardButtonView(size: CGFloat = 28) -> some View {
         ForwardButtonView(man: self, size: size)
     }
 
@@ -96,7 +95,7 @@ public extension MagicPlayMan {
     /// - Returns: 自观察的播放模式按钮视图
     @MainActor
     @ViewBuilder
-    func makePlayModeButtonView(size: MagicButton.Size = .regular) -> some View {
+    func makePlayModeButtonView(size: CGFloat = 28) -> some View {
         PlayModeButtonView(man: self, size: size)
     }
 
@@ -119,19 +118,8 @@ public extension MagicPlayMan {
     /// - Returns: 自观察的喜欢按钮视图
     @MainActor
     @ViewBuilder
-    func makeLikeButtonView(
-        size: MagicButton.Size = .regular,
-        style: MagicButton.Style? = nil,
-        shape: MagicButton.Shape = .roundedSquare,
-        shapeVisibility: MagicButton.ShapeVisibility = .always
-    ) -> some View {
-        LikeButtonView(
-            man: self,
-            size: size,
-            style: style,
-            shape: shape,
-            shapeVisibility: shapeVisibility
-        )
+    func makeLikeButtonView(size: CGFloat = 28) -> some View {
+        LikeButtonView(man: self, size: size)
     }
 
     /// 获取喜欢按钮的动态 ID
@@ -155,7 +143,7 @@ public extension MagicPlayMan {
     /// - Returns: 自观察的订阅者按钮视图
     @MainActor
     @ViewBuilder
-    func makeSubscribersButtonView(size: MagicButton.Size = .regular) -> some View {
+    func makeSubscribersButtonView(size: CGFloat = 28) -> some View {
         SubscribersButtonView(man: self, size: size)
     }
 
@@ -179,6 +167,7 @@ public extension MagicPlayMan {
 
 #Preview("MagicPlayMan") {
     MagicPlayMan.getPreviewView()
+        .frame(height: 600)
 }
 
 #Preview("Button Views") {
@@ -212,9 +201,9 @@ public extension MagicPlayMan {
         VStack(spacing: 16) {
             Text(Localization.preview.differentSizes).font(.caption)
             HStack(spacing: 16) {
-                man.makeLikeButtonView(size: .small)
-                man.makeLikeButtonView(size: .regular)
-                man.makeLikeButtonView(size: .large)
+                man.makeLikeButtonView(size: 24)
+                man.makeLikeButtonView(size: 28)
+                man.makeLikeButtonView(size: 32)
             }
         }
     }
