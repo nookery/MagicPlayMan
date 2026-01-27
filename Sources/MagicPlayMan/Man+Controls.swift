@@ -245,6 +245,29 @@ public extension MagicPlayMan {
         }
     }
 
+    /// 重置播放器
+    /// 完全卸载当前资源，将播放器恢复到初始状态
+    /// - Parameter reason: 重置原因（用于日志记录）
+    @MainActor
+    func reset(reason: String) async {
+        // 停止播放
+        _player.pause()
+
+        // 清除 AVPlayer 的当前项
+        _player.replaceCurrentItem(with: nil)
+
+        // 重置所有状态
+        setCurrentURL(nil)
+        setCurrentTime(0, reason: reason)
+        setDuration(0)
+        setProgress(0)
+        setState(.idle, reason: reason)
+
+        if self.verbose {
+            os_log("\(self.t)🔄 (\(reason)) Player reset to initial state")
+        }
+    }
+
     /// 切换当前资源的喜欢状态
     /// 在喜欢和不喜欢之间切换当前播放资源的喜欢状态
     func toggleLike() {
