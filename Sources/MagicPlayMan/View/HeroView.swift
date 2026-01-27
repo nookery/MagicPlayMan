@@ -12,11 +12,18 @@ struct HeroView: View, SuperLog {
     let url: URL
     let verbose: Bool
     let preferredSize: CGFloat // 首选尺寸
+    let avatarShape: AvatarViewShape? // Avatar 形状
 
-    init(url: URL, verbose: Bool = false, preferredSize: CGFloat = 512) {
+    init(
+        url: URL,
+        verbose: Bool = false,
+        preferredSize: CGFloat = 512,
+        avatarShape: AvatarViewShape? = nil
+    ) {
         self.url = url
         self.verbose = verbose
         self.preferredSize = preferredSize
+        self.avatarShape = avatarShape
     }
 
     var body: some View {
@@ -25,12 +32,19 @@ struct HeroView: View, SuperLog {
             let padding: CGFloat = 40
             let size = availableSize - padding
 
-            url.makeAvatarView(verbose: verbose)
+            let avatarView = url.makeAvatarView(verbose: verbose)
                 .magicSize(size)
-                .magicAvatarShape(.roundedRectangle(cornerRadius: 12))
-                .frame(width: size, height: size)
-                .id(url) // 关键：强制在 URL 改变时重建视图
-                .magicCentered()
+
+            Group {
+                if let shape = avatarShape {
+                    avatarView.magicAvatarShape(shape)
+                } else {
+                    avatarView.magicAvatarShape(.roundedRectangle(cornerRadius: 12))
+                }
+            }
+            .frame(width: size, height: size)
+            .id(url) // 关键：强制在 URL 改变时重建视图
+            .magicCentered()
         }
     }
 }
