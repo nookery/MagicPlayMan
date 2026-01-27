@@ -181,8 +181,7 @@ internal extension MagicPlayMan {
                             os_log("\(self.t)单曲循环模式，重新播放：\(currentAsset.title)")
                         }
                         Task { @MainActor in
-                            self.seek(time: 0, reason: "单曲循环模式，重新播放")
-                            self.setState(.playing, reason: "单曲循环模式，重新播放")
+                            self.playCurrent(reason: "单曲循环模式，重新播放")
                         }
                         return
                     }
