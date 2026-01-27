@@ -83,27 +83,34 @@ public extension MagicPlayMan {
     }
 
     /// 创建主要展示视图
+    /// - Parameters:
+    ///   - verbose: 是否启用详细日志
+    ///   - avatarShape: Avatar 形状，如果为 nil 则使用默认形状
     /// - Returns: 返回一个根据当前媒体资源类型自动适配的主要展示视图：
     /// - 当资源为音频时，显示音频缩略图，不包括音频的标题和艺术家
     /// - 当资源为视频时，显示视频播放视图
-    func makeHeroView(verbose: Bool = false, defaultImage: Image? = nil) -> some View {
+    func makeHeroView(verbose: Bool = false, avatarShape: AvatarViewShape? = nil) -> some View {
         Group {
             if currentAsset == nil {
                 makeEmptyView()
             } else if currentAsset!.isAudio {
-                HeroView(url: currentAsset!, verbose: verbose)
+                HeroView(url: currentAsset!, verbose: verbose, avatarShape: avatarShape)
             } else {
                 makeVideoView()
             }
         }
     }
 
-    func makeHeroView<Content: View>(verbose: Bool = false, @ViewBuilder defaultView: () -> Content) -> some View {
+    func makeHeroView<Content: View>(
+        verbose: Bool = false,
+        avatarShape: AvatarViewShape? = nil,
+        @ViewBuilder defaultView: () -> Content
+    ) -> some View {
         Group {
             if currentAsset == nil {
                 makeEmptyView()
             } else if currentAsset!.isAudio {
-                HeroView(url: currentAsset!, verbose: verbose)
+                HeroView(url: currentAsset!, verbose: verbose, avatarShape: avatarShape)
             } else {
                 makeVideoView()
             }
