@@ -1,5 +1,4 @@
 import MagicKit
-import MagicUI
 import SwiftUI
 
 extension MagicPlayManPreviewView {
