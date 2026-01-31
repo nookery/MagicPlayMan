@@ -9,7 +9,6 @@ public struct MagicPlayManPreviewView: View {
 
     @StateObject var playMan: MagicPlayMan
     @State var selectedSampleName: String?
-    @State var toast: (message: String, icon: String, style: MagicToast.Style)?
 
     // MARK: - Initialization
 
@@ -74,11 +73,7 @@ public struct MagicPlayManPreviewView: View {
             toolbarView
 
             mainContentArea
-                .overlay(alignment: .top) {
-                    if let toast = toast {
-                        toastView(toast)
-                    }
-                }
+                .withMagicToast()
         }
         .onAppear {
             setupEventObservation()

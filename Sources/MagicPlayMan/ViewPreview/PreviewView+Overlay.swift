@@ -54,16 +54,6 @@ extension MagicPlayManPreviewView {
             .padding()
         }
     }
-
-    /// Toast 提示视图
-    func toastView(_ toast: (message: String, icon: String, style: MagicToast.Style)) -> some View {
-        MagicToast(
-            message: toast.message,
-            icon: toast.icon,
-            style: toast.style
-        )
-        .padding(.top, 20)
-    }
 }
 
 // MARK: - Preview
@@ -72,4 +62,3 @@ extension MagicPlayManPreviewView {
     MagicPlayManPreviewView()
         .frame(width: 600, height: 700)
 }
-
